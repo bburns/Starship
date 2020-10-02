@@ -12,120 +12,115 @@
 //-----------------------------------------------------------------------------
 
 
-// public class JavaLander 
-//   extends Applet 
-//   implements KeyListener, Runnable {
+class App {
   
-//   Thread thisThread
-
-//   timeStep = 0.1f // [seconds]
+  constructor() {
+    this.timeStep = 0.1 // [seconds]
   
-//   // sleep delay during each timestep - 
-//   // keeps things from going too fast and flickering (well)
-//   int delay = 100 // [milliseconds] 
-  
-//   World world = new World()
-  
-//   // Keyboard flags
-//   float rdelta = 0.0f
-//   float rdeltaamount = 0.2f
-//   int throttle = 0
-//   int throttleamount = 10
-  
-//   // Initialize the applet
-//   init() {
-  
-//     // Initialize world and all the sprites it contains
-//     world.init(getSize().width, getSize().height)
-
-//     setBackground(Color.white)
-//     setForeground(Color.black)
-
-//     this.addKeyListener(this)
+    // sleep delay during each timestep - 
+    // keeps things from going too fast and flickering (well)
+    this.delay = 100 // [milliseconds] 
     
-//     thisThread = new Thread(this)
-//     thisThread.start()
-//   }
+    this.world = new World()
+    
+    this.rdelta = 0.0
+    this.rdeltaamount = 0.2
+    this.throttle = 0
+    this.throttleamount = 10
+  }
   
-//   public void keyPressed(KeyEvent e) {
-//     switch (e.getKeyCode()) {
-//       // debug:
-//       // case KeyEvent.VK_A:
-//         // world.bStop = true
-//         // break
-//       case KeyEvent.VK_LEFT:
-//         rdelta = -rdeltaamount
-//         break      
-//       case KeyEvent.VK_RIGHT:
-//         rdelta = rdeltaamount
-//         break      
-//       case KeyEvent.VK_UP:
-//         throttle = throttleamount
-//         break
-//       case KeyEvent.VK_DOWN:
-//         throttle = -throttleamount
-//         break
-//     }    
-//   }
+  // Initialize the applet
+  init() {
   
-//   public void keyReleased(KeyEvent e) {
-//     switch (e.getKeyCode()) {
-//       case KeyEvent.VK_LEFT:
-//       case KeyEvent.VK_RIGHT:
-//         rdelta = 0.0f
-//         break      
-//       case KeyEvent.VK_UP:
-//       case KeyEvent.VK_DOWN:
-//         throttle = 0
-//         break
-//     }    
-//   }
-  
-//   public void keyTyped(KeyEvent e) {
-//   }
+    // Initialize world and all the sprites it contains
+    this.world.init(this.getSize().width, this.getSize().height)
 
-//   // Run thread
-//   // This gets called by the applet framework when you get to do something. 
-//   // In this case, advance all objects by one timestep and redraw. 
-//   public void run() {
-//     while (true) {
-      
-//       // Adjust ship rotation and throttle 
-//       world.ship.rotate(rdelta)
-//       world.ship.setThrottle(throttle)
-      
-//       // Advance sprites
-//       world.step(timeStep)
-      
-//       // Pause for a bit, to keep things from going too fast. 
-//       try {
-//         thisThread.sleep(delay)
-//       }
-//       catch(InterruptedException ex) {}
-      
-//       // Repaint display
-//       repaint()
-//     }
-//   }
+    this.setBackground(Color.white)
+    this.setForeground(Color.black)
 
-//   // Draw the world and everything in it
-//   public void paint(Graphics g) {
-//     world.draw(g)
-//   }
-// }
+    // this.addKeyListener(this)
+    
+    // this.thisThread = new Thread(this)
+    // this.thisThread.start()
+  }
+  
+  keyPressed(e) {
+    switch (e.getKeyCode()) {
+      // debug:
+      // case KeyEvent.VK_A:
+        // world.bStop = true
+        // break
+      case KeyEvent.VK_LEFT:
+        this.rdelta = -this.rdeltaamount
+        break      
+      case KeyEvent.VK_RIGHT:
+        this.rdelta = this.rdeltaamount
+        break      
+      case KeyEvent.VK_UP:
+        this.throttle = this.throttleamount
+        break
+      case KeyEvent.VK_DOWN:
+        this.throttle = -this.throttleamount
+        break
+    }    
+  }
+  
+  keyReleased(e) {
+    switch (e.getKeyCode()) {
+      case KeyEvent.VK_LEFT:
+      case KeyEvent.VK_RIGHT:
+        this.rdelta = 0.0
+        break
+      case KeyEvent.VK_UP:
+      case KeyEvent.VK_DOWN:
+        this.throttle = 0
+        break
+    }    
+  }
+  
+  keyTyped(e) {
+  }
+
+  // Run thread
+  // This gets called by the applet framework when you get to do something. 
+  // In this case, advance all objects by one timestep and redraw. 
+  run() {
+    while (true) {
+      
+      // Adjust ship rotation and throttle 
+      this.world.ship.rotate(this.rdelta)
+      this.world.ship.setThrottle(this.throttle)
+      
+      // Advance sprites
+      this.world.step(this.timeStep)
+      
+      // Pause for a bit, to keep things from going too fast. 
+      try {
+        this.thisThread.sleep(delay)
+      }
+      catch(ex) {}
+      
+      // Repaint display
+      this.repaint()
+    }
+  }
+
+  // Draw the world and everything in it
+  paint(graphics) {
+    this.world.draw(graphics)
+  }
+}
 
 
 
 //-----------------------------------------------------------------------------
-// * World
+// World
 //-----------------------------------------------------------------------------
 
 // The world object contains all the sprites - the ship, land, stars, moon, 
 // clouds, etc.
 // Each sprite can be fixed or movable.
 // Also contains a view which it uses in rendering itself and its sprites.
-
-
 // class World {
   
 //   // Attributes: 
