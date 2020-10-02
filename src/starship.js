@@ -659,50 +659,48 @@ class World {
 
 
 //-----------------------------------------------------------------------------
-// * Base
+// Base
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the moonbase.
+class Base extends Sprite {
 
-
-// class Base extends Sprite {
-
-//   public void init(World w) {
+  init(world) {
     
-//     world = w
-//     int width = (int) world.width
-//     int height = (int) world.height
-//     int hillHeight = height / 5 //. 20% of world height
+    this.world = world
+    this.width = world.width
+    this.height = world.height
+    this.hillHeight = height / 5 //. 20% of world height
 
-//     int x = (int) world.land.shapeModel.xPoints[29]
-//     int xw = width / 20
+    this.x = world.land.shapeModel.xPoints[29]
+    this.xw = this.width / 20
     
-//     int y = (int) world.land.shapeModel.yPoints[29]
-//     int yw = height / 40
+    this.y = world.land.shapeModel.yPoints[29]
+    this.yw = this.height / 40
     
-//     shapeModel.addPoint(x, y)
-//     shapeModel.addPoint(x+xw, y)
-//     shapeModel.addPoint(x+xw, y-yw)
-//     shapeModel.addPoint(x, y-yw)
-//     shapeModel.addLineTo(0)
-//     shapeModel.addLineTo(1)
-//     shapeModel.addLineTo(2)
-//     shapeModel.addLineTo(3)
-//     shapeModel.addLineTo(0)
+    this.shapeModel.addPoint(this.x, this.y)
+    this.shapeModel.addPoint(this.x+this.xw, this.y)
+    this.shapeModel.addPoint(this.x+this.xw, this.y-this.yw)
+    this.shapeModel.addPoint(this.x, this.y-this.yw)
+    this.shapeModel.addLineTo(0)
+    this.shapeModel.addLineTo(1)
+    this.shapeModel.addLineTo(2)
+    this.shapeModel.addLineTo(3)
+    this.shapeModel.addLineTo(0)
     
-//     // Set scale
-//     setScale(1.0f)
-//   }
+    // Set scale
+    this.setScale(1.0)
+  }
 
-//   // Draw the base
-//   public void draw(Graphics g, View view) {
-//     shapeDraw = new ShapeX()
-//     shapeDraw.copyFrom(shapeModel)
-//     shapeDraw.transform(tModelToWorld)
-//     shapeDraw.transform(view.tWorldToView)
-//     shapeDraw.drawShape(g)    
-//   }  
-// }
+  // Draw the base
+  draw(graphics, view) {
+    const shapeDraw = new ShapeX()
+    shapeDraw.copyFrom(this.shapeModel)
+    shapeDraw.transform(this.tModelToWorld)
+    shapeDraw.transform(view.tWorldToView)
+    shapeDraw.drawShape(graphics)
+  }  
+}
 
 
 //-----------------------------------------------------------------------------
