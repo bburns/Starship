@@ -121,126 +121,129 @@ class App {
 // clouds, etc.
 // Each sprite can be fixed or movable.
 // Also contains a view which it uses in rendering itself and its sprites.
-// class World {
+class World {
+
+  constructor() {
+    // Attributes: 
+    this.width // Width and height of world, in world units (meters)
+    this.height
+    this.radiansPerDegree = 2.0 * Math.pi / 360.0 // conversion factor
+    this.g = 4.0 // gravity (m/s/s), ~half earth
+
+    // views should probably belong to the applet, since that's the main window
+    // will want a view for the stats also, which could be its own class?
+    this.viewMain = new View()
+    // this.viewShip = new View()
+    
+    // Sprite objects in this world
+    this.ship = new Ship()
+    this.land = new Land()
+    this.moon = new Moon()
+    this.base = new Base()
+    // this.stars = new Stars()
+    // this.clouds = new Clouds()
+
+    this.pointIntersect = new Point2D() // intersection point used in collision testing
+  }
+
+  // Initialize the world
+  // width and height in pixels
+  init(appletWidth, appletHeight) {
+    
+    const widthWindow = 500.0 // the view window looks on this many meters of the world horizontally
+    this.width = widthWindow * 2 // let's make the world two view width's wide
+    this.height = widthWindow / 2.0
+    
+    // Initialize view
+    this.viewMain.init(this, this.appletWidth, this.appletHeight, widthWindow)
+
+    // Set the zoom scale
+    this.viewMain.setScale(1.0)
+    
+    // Initialize all the sprites
+    this.ship.init(this)
+    this.land.init(this)
+    this.moon.init(this)
+    this.base.init(this)
+    // this.stars.init(this)
+    // this.clouds.init(this)
+    
+    // Put ship in middle of world
+    this.ship.setPos(this.width / 2.0, this.height / 2.0)
+
+    //, Tell view to track the ship sprite
+    // this.view.trackSprite(this.ship)
+  }
   
-//   // Attributes: 
-//   public float width, height // Width and height of world, in world units (meters)
-//   public float radiansPerDegree = 2.0f * (float) Math.PI / 360.0f // conversion factor
-//   public float g = 4.0f // gravity (m/s/s), ~half earth
-
-//   // views should probably belong to the applet, since that's the main window
-//   // will want a view for the stats also, which could be its own class?
-//   View viewMain = new View()
-//   // View viewShip = new View()
+  // Advance the world and all objects in it by one timestep. 
+  step(timeStep) {
+    // Move ship and any other moving sprites
+    this.ship.step(timeStep)
+      
+    // Center the view on the ship
+    this.viewMain.centerOn(this.ship)
+  }
   
-//   // Sprite objects in this world
-//   Ship ship = new Ship()
-//   Land land = new Land()
-//   Moon moon = new Moon()
-//   Base base = new Base()
-//   // Stars stars = new Stars()
-//   // Clouds clouds = new Clouds()
-
-//   Point2D pointIntersect = new Point2D() // intersection point used in collision testing                     
-
-//   // Initialize the world
-//   // width and height in pixels
-//   public void init(int appletWidth, int appletHeight) {
+  // Draw the world and all the sprites it contains
+  //... move collision to another fn
+  draw(graphics) {
     
-//     float widthWindow = 500.0f // the view window looks on this many meters of the world horizontally
-//     width = widthWindow * 2 // let's make the world two view width's wide
-//     height = widthWindow / 2.0f
-    
-//     // Initialize view
-//     viewMain.init(this, appletWidth, appletHeight, widthWindow)
+    // Draw sprites
+    moon.draw(graphics, viewMain)
+    land.draw(graphics, viewMain)
+    base.draw(graphics, viewMain)
+    ship.draw(graphics, viewMain)
+    // stars.draw(graphics, viewMain)
+    // clouds.draw(graphics, viewMain)
 
-//     // Set the zoom scale
-//     viewMain.setScale(1.0f)
-    
-//     // Initialize all the sprites
-//     ship.init(this)
-//     land.init(this)
-//     moon.init(this)
-//     base.init(this)
-//     // stars.init(this)
-//     // clouds.init(this)
-    
-//     // Put ship in middle of world
-//     ship.setPos(width / 2.0f, height / 2.0f)
+    // Draw stats and border
+//    viewMain.drawBorder(graphics) // flickers
+//    ship.drawStats(graphics) // flickers
 
-//     //, Tell view to track the ship sprite
-//     // view.trackSprite(ship)
-//   }
-  
-//   // Advance the world and all objects in it by one timestep. 
-//   public void step(float timeStep) {
-//     // Move ship and any other moving sprites
-//     ship.step(timeStep)
-      
-//     // Center the view on the ship
-//     viewMain.centerOn(ship)      
-//   }
-  
-//   // Draw the world and all the sprites it contains
-//   //... move collision to another fn
-//   public void draw(Graphics g) {
+    // Check for collisions
+    // Must do after drawing.
     
-//     // Draw sprites
-//     moon.draw(g, viewMain)
-//     land.draw(g, viewMain)
-//     base.draw(g, viewMain)
-//     ship.draw(g, viewMain)
-//     // stars.draw(g, viewMain)
-//     // clouds.draw(g, viewMain)
-
-//     // Draw stats and border
-// //    viewMain.drawBorder(g) // flickers
-// //    ship.drawStats(g) // flickers
-
-//     // Check for collisions
-//     // Must do after drawing.
+    // Check for ship-base collision = bad or good depending on speed
+    if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
+      
+      // Draw a spark at the point of intersection (a small green circle)
+      let w = 5
+      graphics.setColor(Color.green)
+      graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+      
+      // Ship should explode if above a certain velocity
+      if ((this.ship.vy*this.ship.vy + this.ship.vx*this.ship.vx) > 25) {
+        w = 40
+        graphics.setColor(Color.orange)
+        graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+        console.log("explode ship")
+        this.ship.explode()
+      }
+      
+      // always stop the ship?
+      this.ship.vx = 0 
+      this.ship.vy = 0 
+      
+    }
     
-//     // Check for ship-base collision = bad or good depending on speed
-//     if (ship.checkCollision(base, pointIntersect, g)) {
+    // Check for collisions between the ship and land.
+    else if (this.ship.checkCollision(this.land, pointIntersect, graphics)) {
       
-//       // Draw a spark at the point of intersection (a small green circle)
-//       int w = 5
-//       g.setColor(Color.green)
-//       g.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
-      
-//       // Ship should explode if above a certain velocity
-//       if ((ship.vy*ship.vy + ship.vx*ship.vx) > 25) {
-//         w = 40
-//         g.setColor(Color.orange)
-//         g.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
-//         System.out.println("explode ship")
-//         ship.explode()
-//       }
-      
-//       // always stop the ship?
-//       ship.vx = 0 
-//       ship.vy = 0 
-      
-//     }
-    
-//     // Check for collisions between the ship and land.
-//     else if (ship.checkCollision(land, pointIntersect, g)) {
-      
-//       // Draw a spark at the point of intersection (a small red circle)
-//       int w = 5
-//       g.setColor(Color.red)
-//       g.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+      // Draw a spark at the point of intersection (a small red circle)
+      let w = 5
+      graphics.setColor(Color.red)
+      graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
 
-//       // Impart momentum to the ship
-//       //. a certain amount of energy will go into deforming soil and ship
-//       // ship.angularVelocity += 0.2f
-//       ship.vy = -15.0f // bounce up!
+      // Impart momentum to the ship
+      //. a certain amount of energy will go into deforming soil and ship
+      // ship.angularVelocity += 0.2f
+      this.ship.vy = -15.0 // bounce up!
       
-//       //. Ship should explode if above a certain velocity
-//       // ship.explode()
-//     }
-//   }
-// }
+      //. Ship should explode if above a certain velocity
+      // this.ship.explode()
+    }
+  }
+}
 
 
 
