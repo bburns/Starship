@@ -765,171 +765,167 @@
 //. to be put in separate package
 
 //-----------------------------------------------------------------------------
-// ** Sprite
+// Sprite
 //-----------------------------------------------------------------------------
 
 // A sprite is an object that exists within the world
 // Defines a shape in model coordinates.
 // This gets transformed into world coordinates, then view coordinates, before
 // being drawn. 
+class Sprite {
 
-
-// class Sprite {
-  
-//   // Attributes
-//   int mass // [kg]
-//   float x, y // [m] position in world coordinates
-//   float vx, vy // [m/s] velocity in world units
-//   float ax, ay // [m/s/s] acceleration in world units
-//   float rotation = 0.0f // [radians] current amount of rotation
-//   float angularVelocity = 0.0f // [radians/sec]
-//   float momentOfInertia // [kg] about center of mass
-//   float scale = 1.0f // [unitless] zoom factor
-//   boolean present = true // is this sprite actually here? 
-  
-//   World world // the world this sprite belongs to
-//   Transform tModelToWorld = new Transform() // transformation from model coordinates to world coordinates
-//   ShapeX shapeModel = new ShapeX() // model shape in model coordinates
-//   ShapeX shapeDraw = new ShapeX() // model that will be transformed to view coordinates
-//   Vector children = new Vector() // vector of child sprites
-  
-
-//   // Initialize the sprite
-//   public void init(World w) {
-//     world = w
-//   }
-  
-//   // Set the position of the sprite, in world coordinates
-//   public void setPos(float xWorld, float yWorld) {
-//     x = xWorld
-//     y = yWorld
-//     // Update the transformation matrix
-//     tModelToWorld.setTranslation(x, y)
-//   }
-
-//   // Set the velocity for the sprite, in world units
-//   public void setVelocity(float vxWorld, float vyWorld) {
-//     vx = vxWorld
-//     vy = vyWorld
-//   }
-
-//   // Advance the sprite by one timestep
-//   public void step(float timeStep) {
+  constructor() {
     
-//     // Add acceleration due to gravity
-//     //, um, rather hardcoded
-//     ay += world.g
+    this.mass = null // [kg]
+    this.x = 0 // [m] position in world coordinates
+    this.y = 0
+    this.vx = 0 // [m/s] velocity in world units
+    this.vy = 0
+    this.ax = 0 // [m/s/s] acceleration in world units
+    this.ay = 0
+    this.rotation = 0.0 // [radians] current amount of rotation
+    this.angularVelocity = 0.0 // [radians/sec]
+    this.momentOfInertia = 0 // [kg] about center of mass
+    this.scale = 1.0 // [unitless] zoom factor
+    this.present = true // is this sprite actually here? 
     
-//     // Integrate
-//     //! too primitive - fix this
-//     vx += ax * timeStep
-//     vy += ay * timeStep
-//     x += vx * timeStep
-//     y += vy * timeStep
+    this.world = null // the world this sprite belongs to
+    this.tModelToWorld = new Transform() // transformation from model coordinates to world coordinates
+    this.shapeModel = new ShapeX() // model shape in model coordinates
+    this.shapeDraw = new ShapeX() // model that will be transformed to view coordinates
+    this.children = new Vector() // vector of child sprites
+  }
 
-//     // Rotate
-//     rotation += angularVelocity * timeStep
-    
-//     // Keep sprite in the world
-//     if (x > world.width)
-//       x -= world.width
-//     if (x < 0.0f)
-//       x += world.width
-    
-//     // Update the transformation matrix
-//     tModelToWorld.setTranslation(x, y)
-
-//     // Update any child sprites also
-// //    for (Sprite s : children.elements()) {
-//     Iterator i = children.iterator()
-//     while (i.hasNext()) {
-//       Sprite s = (Sprite) i.next()
-//       s.step(timeStep)
-//     }
-   
-//   }
+  // Initialize the sprite
+  init(world) {
+    this.world = world
+  }
   
-//   // Set the zoom scale and update the drawing polygon.
-//   // Better to do this once here than with each draw call!
-//   public void setScale(float s) {
-//     // Save the new scale
-//     scale = s
-//     tModelToWorld.setScale(scale, scale)
-//   }
+  // Set the position of the sprite, in world coordinates
+  setPos(xWorld, yWorld) {
+    this.x = xWorld
+    this.y = yWorld
+    // Update the transformation matrix
+    this.tModelToWorld.setTranslation(xWorld, yWorld)
+  }
 
-//   // Set the rotation amount for the ship in radians and update the 
-//   // drawing polygon.
-//   public void setRotation(float r) {
-//     rotation = r    
-//     tModelToWorld.setRotation(rotation)
-//   }
-  
-//   // Rotate the ship by the specified amount (in radians) and update 
-//   // the drawing polygon.
-//   public void rotate(float rdelta) {
-//     rotation += rdelta
-//     tModelToWorld.setRotation(rotation)
-//   }
-  
-//   // Check for a collision between this sprite and the specified sprite
-//   public boolean checkCollision(Sprite s, Point2D pointIntersect, Graphics g) {
-// //    return shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)
-//     if (shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)) return true
-//     Iterator i = children.iterator()
-//     while (i.hasNext()) {
-//       Sprite sc = (Sprite) i.next()
-//       if (sc.shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)) return true
-//     }    
-//     return false
-//   }
+  // Set the velocity for the sprite, in world units
+  setVelocity(vxWorld, vyWorld) {
+    this.vx = vxWorld
+    this.vy = vyWorld
+  }
 
-//   // Make the sprite explode!
-//   public void explode() {
-//     //, default behavior will scatter the linesegments that make up 
-//     // the sprite, add flames, etc.
+  // Advance the sprite by one timestep
+  step(timeStep) {
     
-//     Sprite s = new Sprite()
-//     s.init(world)
-//     s.setPos(x, y)
-//     s.setVelocity(vx, vy - 15.0f)
-//     s.shapeModel.addPoint(0, -25) // 0
-//     s.shapeModel.addPoint(10, 10) // 1
-//     s.shapeModel.addPoint(0,0) // 2
-//     s.shapeModel.addLineTo(0)
-//     s.shapeModel.addLineTo(1)
-//     s.shapeModel.addLineTo(2)
-//     s.shapeModel.addLineTo(0)
-//     children.addElement(s)
-// System.out.println("added child sprite")
+    // Add acceleration due to gravity
+    //, um, rather hardcoded
+    this.ay += this.world.g
+    
+    // Integrate
+    //. too primitive - fix this
+    this.vx += this.ax * timeStep
+    this.vy += this.ay * timeStep
+    this.x += this.vx * timeStep
+    this.y += this.vy * timeStep
 
-//     // clear the old line segments
-//     //shapeModel = new ShapeX()
-//     this.present = false
-//   }
+    // Rotate
+    this.rotation += this.angularVelocity * timeStep
+    
+    // Keep sprite in the world
+    if (this.x > this.world.width)
+      this.x -= this.world.width
+    if (this.x < 0.0)
+      this.x += this.world.width
+    
+    // Update the transformation matrix
+    this.tModelToWorld.setTranslation(this.x, this.y)
+
+    // Update any child sprites also
+    for (const sprite of this.children) {
+      sprite.step(timeStep)
+    }   
+  }
   
-//   // Draw the sprite on the screen using the given view transformation
-//   public void draw(Graphics g, View view)  {
+  // Set the zoom scale and update the drawing polygon.
+  // Better to do this once here than with each draw call!
+  setScale(scale) {
+    // Save the new scale
+    this.scale = scale
+    this.tModelToWorld.setScale(scale, scale)
+  }
+
+  // Set the rotation amount for the ship in radians and update the 
+  // drawing polygon.
+  setRotation(rotation) {
+    this.rotation = rotation
+    this.tModelToWorld.setRotation(rotation)
+  }
+  
+  // Rotate the ship by the specified amount (in radians) and update 
+  // the drawing polygon.
+  rotate(rdelta) {
+    this.rotation += rdelta
+    this.tModelToWorld.setRotation(this.rotation)
+  }
+  
+  // Check for a collision between this sprite and the specified sprite. 
+  // returns boolean
+  checkCollision(other, pointIntersect, graphics) {
+    // return shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)
+    if (this.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+      return true
+    }
+    for (const child of this.children) {
+      if (child.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+        return true
+      }
+    }    
+    return false
+  }
+
+  // Make the sprite explode!
+  explode() {
+    //, default behavior will scatter the linesegments that make up 
+    // the sprite, add flames, etc.
     
-//     // We have the model coordinates, need to convert to world coordinates 
-//     // using the sprite transformation, then convert to view coordinates 
-//     // using the view transformation.
-//     // Can combine these into one transform for speed.
-//     shapeDraw = new ShapeX()
-//     shapeDraw.copyFrom(shapeModel)
-//     shapeDraw.transform(tModelToWorld)
-//     shapeDraw.transform(view.tWorldToView)
-//     shapeDraw.drawShape(g)
+    const s = new Sprite()
+    s.init(this.world)
+    s.setPos(this.x, this.y)
+    s.setVelocity(this.vx, this.vy - 15.0)
+    s.shapeModel.addPoint(0, -25) // 0
+    s.shapeModel.addPoint(10, 10) // 1
+    s.shapeModel.addPoint(0,0) // 2
+    s.shapeModel.addLineTo(0)
+    s.shapeModel.addLineTo(1)
+    s.shapeModel.addLineTo(2)
+    s.shapeModel.addLineTo(0)
+    this.children.addElement(s)
+
+    // clear the old line segments
+    //shapeModel = new ShapeX()
+    this.present = false
+  }
+  
+  // Draw the sprite on the screen using the given view transformation
+  draw(graphics, view)  {
     
-//     // Now draw any child sprites
-// //    for (Sprite s : children.elements()) {
-//     Iterator i = children.iterator()
-//     while (i.hasNext()) {
-//       Sprite s = (Sprite) i.next()
-//       s.draw(g, view)
-//     }    
+    // We have the model coordinates, need to convert to world coordinates 
+    // using the sprite transformation, then convert to view coordinates 
+    // using the view transformation.
+    // Can combine these into one transform for speed.
+    const shapeDraw = new ShapeX()
+    shapeDraw.copyFrom(this.shapeModel)
+    shapeDraw.transform(this.tModelToWorld)
+    shapeDraw.transform(view.tWorldToView)
+    shapeDraw.drawShape(graphics)
     
-//   }  
-// }
+    // Now draw any child sprites
+    for (const child of this.children) {
+      child.draw(graphics, view)
+    }    
+  }  
+}
 
 
 
