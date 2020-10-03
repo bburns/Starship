@@ -538,55 +538,54 @@ class Ship {
 
 
 //-----------------------------------------------------------------------------
-// * Flame
+// Flame
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the flickering flame from the ship
-
-
-// class Flame 
-//   extends Sprite {
-    
-//   Ship ship // the shipe this sprite belongs to
+class Flame {
   
-//   // Initialize the flame
-//   public void init(World w) {
-    
-//     world = w
+  constructor() {
+    this.ship = null // the shipe this sprite belongs to
+  }
   
-//     // Define flame's shape, in world units (meters)
-//     shapeModel.addPoint(-5, 11) // 0
-//     shapeModel.addPoint( 0, 60) // 1
-//     shapeModel.addPoint( 5, 11) // 2
-
-//     shapeModel.addLineTo(0)
-//     shapeModel.addLineTo(1)
-//     shapeModel.addLineTo(2)    
-//   }
-
-//   // Draw the flickering flame
-//   //, Note: will eventually just use base class to draw this sprite -
-//   // it has a parent which is where draw will get tModelToWorld from
-//   public void draw(Graphics g, View view) {
+  // Initialize the flame
+  init(world) {
     
-//     // Set color for flames
-//     if (Math.random() > 0.5)
-//       g.setColor(Color.yellow) //. do white or yelloworange. red is too red. redorange? 
-//     else
-//       g.setColor(Color.orange)
+    this.world = world
+  
+    // Define flame's shape, in world units (meters)
+    this.shapeModel.addPoint(-5, 11) // 0
+    this.shapeModel.addPoint( 0, 60) // 1
+    this.shapeModel.addPoint( 5, 11) // 2
 
-//     // Draw shape using base class
-// //    super.draw(g, view)    
-//     shapeDraw = new ShapeX()
-//     shapeDraw.copyFrom(shapeModel)
-//     shapeDraw.transform(ship.tModelToWorld)
-//     shapeDraw.transform(view.tWorldToView)
-//     shapeDraw.drawShape(g)
+    this.shapeModel.addLineTo(0)
+    this.shapeModel.addLineTo(1)
+    this.shapeModel.addLineTo(2)    
+  }
+
+  // Draw the flickering flame
+  //, Note: will eventually just use base class to draw this sprite -
+  // it has a parent which is where draw will get tModelToWorld from
+  draw(graphics, view) {
     
-//     //, set color back
-//     g.setColor(Color.black)
-//   }
-// }
+    // Set color for flames
+    if (Math.random() > 0.5)
+      graphics.setColor(Color.yellow) //. do white or yelloworange. red is too red. redorange? 
+    else
+      graphics.setColor(Color.orange)
+
+    // Draw shape using base class
+    // super.draw(g, view)    
+    this.shapeDraw = new ShapeX()
+    this.shapeDraw.copyFrom(this.shapeModel)
+    this.shapeDraw.transform(this.ship.tModelToWorld)
+    this.shapeDraw.transform(this.view.tWorldToView)
+    this.shapeDraw.drawShape(graphics)
+    
+    //, set color back
+    graphics.setColor(Color.black)
+  }
+}
 
 
 
