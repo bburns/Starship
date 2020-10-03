@@ -13,6 +13,20 @@
 import * as sprites from './sprites'
 
 
+// mimic Java's graphics context
+class Graphics {
+}
+
+const Color = {
+  white: '#fff',
+  black: '#000',
+  green: '#0f0',
+  orange: '#f80',
+}
+
+
+
+
 class App {
   
   constructor() {
@@ -34,6 +48,7 @@ class App {
   run(context) {
   
     this.context = context
+    this.graphics = new Graphics(this.canvas)
     
     // Initialize world and all the sprites it contains
     // this.world.init(this.getSize().width, this.getSize().height)
@@ -102,14 +117,17 @@ class App {
       catch(ex) {}
       
       // Repaint display
-      this.repaint()
+      // this.repaint()
+      // this.graphics.repaint()
+      this.world.draw(this.graphics)
     }
   }
 
-  // Draw the world and everything in it
-  paint(graphics) {
-    this.world.draw(graphics)
-  }
+  // // Draw the world and everything in it
+  // //. gets called by java with the 'canvas' graphics
+  // paint(graphics) {
+  //   this.world.draw(graphics)
+  // }
 }
 
 
@@ -203,7 +221,7 @@ class World {
 
     // Check for collisions
     // Must do after drawing.
-    const pointIntersect = new Point2D() // intersection point used in collision testing
+    const pointIntersect = new sprites.Point2D() // intersection point used in collision testing
     
     // Check for ship-base collision = bad or good depending on speed
     if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
@@ -263,7 +281,7 @@ class View {
     // Attributes
     this.world = null // reference to world that this view is looking at
     this.trackSprite = null // reference to sprite that we want to track
-    this.tWorldToView = new Transform() // transform from world coordinates to view coordinates
+    this.tWorldToView = new sprites.Transform() // transform from world coordinates to view coordinates
     
     // Position and size of view, in world coordinates
     this.xWorld = 0
@@ -367,10 +385,10 @@ class View {
 
 // A sprite to represent the ship
 // Also contains a flame sprite, to represent the flame. 
-//. extends Sprite
-class Ship {
+class Ship extends sprites.Sprite {
 
   constructor() {
+    super()
     // Attributes
     this.massShip = 0 // [kg]
     this.massFuel = 0 // [kg]
@@ -544,9 +562,10 @@ class Ship {
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the flickering flame from the ship
-class Flame {
+class Flame extends sprites.Sprite {
   
   constructor() {
+    super()
     this.ship = null // the shipe this sprite belongs to
   }
   
@@ -578,7 +597,7 @@ class Flame {
 
     // Draw shape using base class
     // super.draw(g, view)    
-    this.shapeDraw = new ShapeX()
+    this.shapeDraw = new sprites.ShapeX()
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.ship.tModelToWorld)
     this.shapeDraw.transform(this.view.tWorldToView)
@@ -597,7 +616,8 @@ class Flame {
 
 // A sprite to represent the hills.
 // Land will wrap around when reaches the edges. 
-class Land extends Sprite {
+// class Land extends Sprite {
+class Land extends sprites.Sprite {
 
   // Initialize the land sprite, by making up random hills.
   init(world) {
@@ -629,7 +649,7 @@ class Land extends Sprite {
   // Draw the land
   draw(graphics, view) {
     
-    const shapeDraw = new ShapeX()
+    const shapeDraw = new sprites.ShapeX()
     shapeDraw.copyFrom(this.shapeModel)
     shapeDraw.transform(this.tModelToWorld)
     shapeDraw.transform(view.tWorldToView)
@@ -637,10 +657,10 @@ class Land extends Sprite {
     
     // Repeat land off to the right
     if (view.xWorld > (this.world.width - view.widthWorld)) {
-      const shape2 = new ShapeX()
+      const shape2 = new sprites.ShapeX()
       shape2.copyFrom(this.shapeModel)
-      shape2.transform(tModelToWorld)
-      const t = new Transform()
+      shape2.transform(this.tModelToWorld)
+      const t = new sprites.Transform()
       t.setTranslation(view.world.width, 0)
       shape2.transform(t)
       shape2.transform(view.tWorldToView)
@@ -648,10 +668,10 @@ class Land extends Sprite {
     }
     // Repeat land off to the left
     if (view.xWorld < view.widthWorld) {
-      const shape2 = new ShapeX()
+      const shape2 = new sprites.ShapeX()
       shape2.copyFrom(this.shapeModel)
       shape2.transform(view.tModelToWorld)
-      const t = new Transform()
+      const t = new sprites.Transform()
       t.setTranslation(-view.world.width, 0)
       shape2.transform(t)
       shape2.transform(view.tWorldToView)
@@ -666,14 +686,14 @@ class Land extends Sprite {
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the moonbase.
-class Base extends Sprite {
+class Base extends sprites.Sprite {
 
   init(world) {
     
     this.world = world
     this.width = world.width
     this.height = world.height
-    this.hillHeight = height / 5 //. 20% of world height
+    this.hillHeight = this.height / 5 //. 20% of world height
 
     this.x = world.land.shapeModel.xPoints[29]
     this.xw = this.width / 20
@@ -697,7 +717,7 @@ class Base extends Sprite {
 
   // Draw the base
   draw(graphics, view) {
-    const shapeDraw = new ShapeX()
+    const shapeDraw = new sprites.ShapeX()
     shapeDraw.copyFrom(this.shapeModel)
     shapeDraw.transform(this.tModelToWorld)
     shapeDraw.transform(view.tWorldToView)
@@ -711,10 +731,10 @@ class Base extends Sprite {
 //-----------------------------------------------------------------------------
 
 // A simple circle that doesn't interact with other sprites
-//. extend sprite
-class Moon {
+class Moon extends sprites.Sprite {
 
   constructor() {
+    super()
     this.diam = 40 // [m]
   }
   
