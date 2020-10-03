@@ -4,11 +4,10 @@
 // Note: all units are kg, meters, m/s, m/s/s, radians, newtons, etc.  
 //
 // Author: Brian Burns
-// License: GPL
 // History:
 //   version 0.1  2001-05  no base, bounces on surface
 //   version 0.2  2012-05  adding base, realistic collisions
-//   version 0.3  2015-12  converting to javascript
+//   version 0.3  2020-10  converting to javascript
 //-----------------------------------------------------------------------------
 
 
