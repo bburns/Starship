@@ -27,7 +27,8 @@ export class Sprite {
     this.tModelToWorld = new Transform() // transformation from model coordinates to world coordinates
     this.shapeModel = new ShapeX() // model shape in model coordinates
     this.shapeDraw = new ShapeX() // model that will be transformed to view coordinates
-    this.children = new Vector() // vector of child sprites
+    // this.children = new Vector() // vector of child sprites
+    this.children = [] // vector of child sprites
   }
 
   // Initialize the sprite
@@ -203,8 +204,8 @@ export class ShapeX {
 
   // Add a point to the shape
   addPoint(x, y) {
-    this.xPoints[nPoints] = x
-    this.yPoints[nPoints] = y
+    this.xPoints[this.nPoints] = x
+    this.yPoints[this.nPoints] = y
     this.nPoints++
     // Update bounding rectangle
     if (x < this.x1) this.x1 = x
@@ -224,10 +225,10 @@ export class ShapeX {
   // copyFrom(ShapeX p) {
   copyFrom(other) {
     for (let i = 0; i < other.nPoints; i++) {
-      addPoint(other.xPoints[i], other.yPoints[i])
+      this.addPoint(other.xPoints[i], other.yPoints[i])
     }
     for (let i = 0; i < other.nLines; i++) {
-      addLineTo(other.nLine[i])
+      this.addLineTo(other.nLine[i])
     }
     this.x1 = other.x1
     this.x2 = other.x2
@@ -274,8 +275,8 @@ export class ShapeX {
       if (shape2.getLineSegment(seg2, i)) {
         // debug:
         // seg2.drawSegment(g, Color.orange)
-        for (let j = 0; j < nLines - 1; j++) {
-          if (getLineSegment(seg1, j)) {
+        for (let j = 0; j < this.nLines - 1; j++) {
+          if (this.getLineSegment(seg1, j)) {
             // debug:
             // seg1.drawSegment(g, Color.blue)
             // pause here for key strike - if "a" then break here
@@ -329,12 +330,12 @@ export class ShapeX {
         start = true
       else {
         // Draw a line to the next point
-        const xNew = xPoints[nPoint]
-        const yNew = yPoints[nPoint]
+        const xNew = this.xPoints[nPoint]
+        const yNew = this.yPoints[nPoint]
         if (start === false)
           graphics.drawLine(xOld, yOld, xNew, yNew)
         // good for debugging
-//        graphics.drawString("L" + i, xOld, yOld)
+        // graphics.drawString("L" + i, xOld, yOld)
         xOld = xNew
         yOld = yNew
         start = false
@@ -421,20 +422,20 @@ export class Segment {
     
     // Get equations describing lines (ax + bx = c),
     // then solve for a point - if no solution, no intersection.
-    getLineParameters()
+    this.getLineParameters()
     segment.getLineParameters()
-    const denom = b * segment.a - segment.b * a
+    const denom = this.b * segment.a - segment.b * this.a
     // If denominator is zero, no solution, so no intersection (ie lines are parallel)
     // You can see that the slopes are the same because if a/b == a'/b' then denom=0
     if (denom === 0)
       return false
     // Now check if intersecting point is actually within both line segments
-    const x = (b * segment.c - segment.b * c) / denom
-    const y = (c * segment.a - segment.c * a) / denom
+    const x = (this.b * segment.c - segment.b * this.c) / denom
+    const y = (this.c * segment.a - segment.c * this.a) / denom
     //.. don't know relative positions of p1 and p2, so must account for that also!
 //    if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line segment
 //    if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment s either
-    if (pointInBounds(x, y) == false) return false
+    if (this.pointInBounds(x, y) == false) return false
     if (segment.pointInBounds(x, y) == false) return false
     // Must be on both line segments so set point and return true!
     point2d.x = x
@@ -472,7 +473,7 @@ export class Segment {
     else {
       this.a = 1.0
       this.b = ((this.x1 - this.x2)) / ((this.y2 - this.y1))
-      this.c = a * this.x1 + this.b * this.y1
+      this.c = this.a * this.x1 + this.b * this.y1
     }
   }
 
