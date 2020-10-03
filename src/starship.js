@@ -29,8 +29,10 @@ class App {
   }
   
   // Initialize the applet
-  init() {
+  run(context) {
   
+    this.context = context
+
     // Initialize world and all the sprites it contains
     this.world.init(this.getSize().width, this.getSize().height)
 
@@ -80,10 +82,7 @@ class App {
   keyTyped(e) {
   }
 
-  // Run thread
-  // This gets called by the applet framework when you get to do something. 
-  // In this case, advance all objects by one timestep and redraw. 
-  run() {
+  step() {
     while (true) {
       
       // Adjust ship rotation and throttle 
@@ -124,8 +123,8 @@ class World {
 
   constructor() {
     // Attributes: 
-    this.width // Width and height of world, in world units (meters)
-    this.height
+    this.width = 0 // Width and height of world, in world units (meters)
+    this.height = 0
     this.radiansPerDegree = 2.0 * Math.pi / 360.0 // conversion factor
     this.g = 4.0 // gravity (m/s/s), ~half earth
 
@@ -142,7 +141,7 @@ class World {
     // this.stars = new Stars()
     // this.clouds = new Clouds()
 
-    this.pointIntersect = new Point2D() // intersection point used in collision testing
+    // this.pointIntersect = new Point2D() // intersection point used in collision testing
   }
 
   // Initialize the world
@@ -188,19 +187,20 @@ class World {
   draw(graphics) {
     
     // Draw sprites
-    moon.draw(graphics, viewMain)
-    land.draw(graphics, viewMain)
-    base.draw(graphics, viewMain)
-    ship.draw(graphics, viewMain)
-    // stars.draw(graphics, viewMain)
-    // clouds.draw(graphics, viewMain)
+    this.moon.draw(graphics, this.viewMain)
+    this.land.draw(graphics, this.viewMain)
+    this.base.draw(graphics, this.viewMain)
+    this.ship.draw(graphics, this.viewMain)
+    // this.stars.draw(graphics, this.viewMain)
+    // this.clouds.draw(graphics, this.viewMain)
 
     // Draw stats and border
 //    viewMain.drawBorder(graphics) // flickers
-//    ship.drawStats(graphics) // flickers
+//    this.ship.drawStats(graphics) // flickers
 
     // Check for collisions
     // Must do after drawing.
+    const pointIntersect = new Point2D() // intersection point used in collision testing
     
     // Check for ship-base collision = bad or good depending on speed
     if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
@@ -748,3 +748,12 @@ class Stars {
 // sprites
 class Clouds {
 }
+
+
+
+//-----------------------------------------------------------------------------
+// main
+//-----------------------------------------------------------------------------
+
+const app = new App()
+export default app
