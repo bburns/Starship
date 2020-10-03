@@ -10,6 +10,8 @@
 //   version 0.3  2020-10  converting to javascript
 //-----------------------------------------------------------------------------
 
+import * as sprites from './sprites'
+
 
 class App {
   
@@ -32,12 +34,13 @@ class App {
   run(context) {
   
     this.context = context
-
+    
     // Initialize world and all the sprites it contains
-    this.world.init(this.getSize().width, this.getSize().height)
+    // this.world.init(this.getSize().width, this.getSize().height)
+    this.world.init(context.canvas.width, context.canvas.height)
 
-    this.setBackground(Color.white)
-    this.setForeground(Color.black)
+    // context.setBackground(Color.white)
+    // context.strokeStyle = '#000'
 
     // this.addKeyListener(this)
     
@@ -45,42 +48,42 @@ class App {
     // this.thisThread.start()
   }
   
-  keyPressed(e) {
-    switch (e.getKeyCode()) {
-      // debug:
-      // case KeyEvent.VK_A:
-        // world.bStop = true
-        // break
-      case KeyEvent.VK_LEFT:
-        this.rdelta = -this.rdeltaamount
-        break      
-      case KeyEvent.VK_RIGHT:
-        this.rdelta = this.rdeltaamount
-        break      
-      case KeyEvent.VK_UP:
-        this.throttle = this.throttleamount
-        break
-      case KeyEvent.VK_DOWN:
-        this.throttle = -this.throttleamount
-        break
-    }    
-  }
+  // keyPressed(e) {
+  //   switch (e.getKeyCode()) {
+  //     // debug:
+  //     // case KeyEvent.VK_A:
+  //       // world.bStop = true
+  //       // break
+  //     case KeyEvent.VK_LEFT:
+  //       this.rdelta = -this.rdeltaamount
+  //       break      
+  //     case KeyEvent.VK_RIGHT:
+  //       this.rdelta = this.rdeltaamount
+  //       break      
+  //     case KeyEvent.VK_UP:
+  //       this.throttle = this.throttleamount
+  //       break
+  //     case KeyEvent.VK_DOWN:
+  //       this.throttle = -this.throttleamount
+  //       break
+  //   }    
+  // }
   
-  keyReleased(e) {
-    switch (e.getKeyCode()) {
-      case KeyEvent.VK_LEFT:
-      case KeyEvent.VK_RIGHT:
-        this.rdelta = 0.0
-        break
-      case KeyEvent.VK_UP:
-      case KeyEvent.VK_DOWN:
-        this.throttle = 0
-        break
-    }    
-  }
+  // keyReleased(e) {
+  //   switch (e.getKeyCode()) {
+  //     case KeyEvent.VK_LEFT:
+  //     case KeyEvent.VK_RIGHT:
+  //       this.rdelta = 0.0
+  //       break
+  //     case KeyEvent.VK_UP:
+  //     case KeyEvent.VK_DOWN:
+  //       this.throttle = 0
+  //       break
+  //   }    
+  // }
   
-  keyTyped(e) {
-  }
+  // keyTyped(e) {
+  // }
 
   step() {
     while (true) {
@@ -94,7 +97,7 @@ class App {
       
       // Pause for a bit, to keep things from going too fast. 
       try {
-        this.thisThread.sleep(delay)
+        this.thisThread.sleep(this.delay)
       }
       catch(ex) {}
       

@@ -6,7 +6,7 @@
 // Defines a shape in model coordinates.
 // This gets transformed into world coordinates, then view coordinates, 
 // before being drawn. 
-class Sprite {
+export class Sprite {
 
   constructor() {
     
@@ -177,7 +177,7 @@ class Sprite {
 //! move all this into a package, to avoid name conflict?
 //, might be able to implement Shape interface eventually?
 //, store bounding rectangle as two points - translate them along with other points
-class ShapeX {
+export class ShapeX {
 
   constructor() {
     
@@ -355,7 +355,7 @@ class ShapeX {
 //   | b e |
 //   | c f |
 // Defaults to the identity transform (a and d = 1, all others 0)
-class Transform {
+export class Transform {
   
   constructor(a, b, c, d, e, f) {
     this.a = 1.0 // default
@@ -402,7 +402,7 @@ class Transform {
 // Represents a line segment (x1, y1) to (x2, y2).
 // The line segment lies along the line (ax + by = c), the terms of which 
 // can be obtained by a call to getLineParameters().
-class Segment {
+export class Segment {
 
   constructor(x1, y1, x2, y2) {
     this.x1 = x1
@@ -497,7 +497,7 @@ class Segment {
 //-----------------------------------------------------------------------------
 
 // Represents a 2D point
-class Point2D {
+export class Point2D {
   constructor(x, y) {
     this.x = x
     this.y = y
