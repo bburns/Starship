@@ -636,24 +636,24 @@ class Land extends Sprite {
     // Repeat land off to the right
     if (view.xWorld > (this.world.width - view.widthWorld)) {
       const shape2 = new ShapeX()
-      shape2.copyFrom(shapeModel)
+      shape2.copyFrom(this.shapeModel)
       shape2.transform(tModelToWorld)
-      Transform t = new Transform()
-      t.setTranslation(world.width, 0)
+      const t = new Transform()
+      t.setTranslation(view.world.width, 0)
       shape2.transform(t)
       shape2.transform(view.tWorldToView)
-      shape2.drawShape(g)
+      shape2.drawShape(graphics)
     }
     // Repeat land off to the left
     if (view.xWorld < view.widthWorld) {
-      ShapeX shape2 = new ShapeX()
-      shape2.copyFrom(shapeModel)
-      shape2.transform(tModelToWorld)
-      Transform t = new Transform()
-      t.setTranslation(-world.width, 0)
+      const shape2 = new ShapeX()
+      shape2.copyFrom(this.shapeModel)
+      shape2.transform(view.tModelToWorld)
+      const t = new Transform()
+      t.setTranslation(-view.world.width, 0)
       shape2.transform(t)
       shape2.transform(view.tWorldToView)
-      shape2.drawShape(g)
+      shape2.drawShape(graphics)
     }
   }  
 }
