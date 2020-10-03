@@ -248,108 +248,114 @@ class World {
 
 
 //-----------------------------------------------------------------------------
-// * View
+// View
 //-----------------------------------------------------------------------------
 
 // A view is a window on the world.
 // Has a certain position in the world, and converts to/from pixel units.
 // Can be set to track a certain sprite, to keep it in the center of the view. 
+class View {
 
+  constructor() {
 
-// class View {
+    // Attributes
+    this.world = null // reference to world that this view is looking at
+    this.trackSprite = null // reference to sprite that we want to track
+    this.tWorldToView = new Transform() // transform from world coordinates to view coordinates
+    
+    // Position and size of view, in world coordinates
+    this.xWorld = 0
+    this.yWorld = 0
+    this.widthWorld = 0
+    this.heightWorld = 0
 
-//   // Attributes
-//   World world // reference to world that this view is looking at
-//   Sprite trackSprite // reference to sprite that we want to track
-//   Transform tWorldToView = new Transform() // transform from world coordinates to view coordinates
+    // Size of view, in pixels
+    this.widthPixels = 0
+    this.heightPixels = 0
+    
+    // Scale
+    // private float aspectRatio = 1.2f
+    this.xscale = 0 // pixels per world unit
+    this.yscale = 0
+    this.scaleFactor = 0 // unitless zoom factor (eg 2.0 means zoom in by factor of 2, 0.5 is zoom out)
+
+  }
+
+  // Initialize the view
+  init(world, viewWidthPixels, viewHeightPixels, viewWidthWorldUnits) {
+
+    this.world = world
+    this.widthPixels = viewWidthPixels
+    this.heightPixels = viewHeightPixels
+    this.scaleFactor = 1.0 // initialize zoom factor (unitless)
+
+    // Get conversion factor between pixels and world units
+    this.xscale = this.widthPixels / viewWidthWorldUnits // pixels per world unit
+    this.yscale = this.xscale // for now
+    
+    // Save width and height of view in world units
+    this.widthWorld = viewWidthWorldUnits
+    this.heightWorld = this.heightPixels / this.yscale
+
+    // Initialize the view transform, which converts from world coordinates to view coordinates (pixels)
+    this.tWorldToView.setScale(this.xscale * this.scaleFactor, this.yscale * this.scaleFactor)
+    this.tWorldToView.setRotation(0.0)
+    // this.tWorldToView.setTranslation(- this.xscale * this.xWorld, - this.yscale * this.yWorld)
+    this.setPos(this.xWorld, this.yWorld) // sets translate vector
+  }
   
-//   // Position and size of view, in world coordinates
-//   public float xWorld, yWorld
-//   public float widthWorld, heightWorld
-
-//   // Size of view, in pixels
-//   public int widthPixels, heightPixels
+  // Track the specified sprite to keep it centered in the view if possible
+  trackSprite(sprite) {
+    this.trackSprite = sprite
+  }
   
-//   // Scale
-//   // private float aspectRatio = 1.2f
-//   public float xscale, yscale // pixels per world unit
-//   public float scaleFactor // unitless zoom factor (eg 2.0 means zoom in by factor of 2, 0.5 is zoom out)
-
-//   // Initialize the view
-//   public void init(World w, int viewWidthPixels, int viewHeightPixels, float viewWidthWorldUnits) {
-
-//     world = w
-//     widthPixels = viewWidthPixels
-//     heightPixels = viewHeightPixels
-//     scaleFactor = 1.0f // initialize zoom factor (unitless)
-
-//     // Get conversion factor between pixels and world units
-//     xscale = widthPixels / viewWidthWorldUnits // pixels per world unit
-//     yscale = xscale // for now
+  setScale(scale) {
+    this.scaleFactor = scale
+    // this.tWorldToView.setScale(scale, scale)
+    // this.tWorldToView.setTranslation(- this.xscale * this.xWorld, - this.yscale * this.yWorld)
+    this.tWorldToView.setScale(this.xscale * this.scaleFactor, this.yscale * this.scaleFactor)
+    this.setPos(this.xWorld, this.yWorld) // upates translate vector
+  }
     
-//     // Save width and height of view in world units
-//     widthWorld = viewWidthWorldUnits
-//     heightWorld = heightPixels / yscale
+  // Center view on the specified sprite
+  //. also include approx size of sprite
+  centerOn(sprite) {
+    
+    // Set position of view in world coords so sprite will be centered in the view
+    this.x = sprite.x - this.widthWorld / 2 / this.scaleFactor
+    this.y = sprite.y - this.heightWorld / 2 / this.scaleFactor
+    
+    // Keep view in world vertically
+    if ((this.y + this.heightWorld / this.scaleFactor) > this.world.height)
+    this.y = this.world.height - this.heightWorld / this.scaleFactor
+    if (this.y < 0)
+    this.y = 0
+    
+    // Wraparound view horizontally
+    // if (this.x > this.world.width)
+    //   this.x -= this.world.width
+    // if (this.x < 0)
+    //   this.x += this.world.width
 
-//     // Initialize the view transform, which converts from world coordinates to view coordinates (pixels)
-//     tWorldToView.setScale(xscale * scaleFactor, yscale * scaleFactor)
-//     tWorldToView.setRotation(0.0f)
-// //    tWorldToView.setTranslation(- xscale * xWorld, - yscale * yWorld)
-//     setPos(xWorld, yWorld) // sets translate vector
-//   }
-  
-//   // Track the specified sprite to keep it centered in the view if possible
-//   public void trackSprite(Sprite s) {
-//     trackSprite = s
-//   }
-  
-//   public void setScale(float s) {
-//     scaleFactor = s
-//     // tWorldToView.setScale(s, s)
-//     // tWorldToView.setTranslation(- xscale * xWorld, - yscale * yWorld)
-//     tWorldToView.setScale(xscale * scaleFactor, yscale * scaleFactor)
-//     setPos(xWorld, yWorld) // upates translate vector
-//   }
-    
-//   // Center view on the specified sprite
-//   //. also include approx size of sprite
-//   public void centerOn(Sprite sprite) {
-    
-//     // Set position of view in world coords so sprite will be centered in the view
-//     float x = sprite.x - widthWorld / 2 / scaleFactor
-//     float y = sprite.y - heightWorld / 2 / scaleFactor
-    
-//     // Keep view in world vertically
-//     if ((y + heightWorld / scaleFactor) > world.height)
-//       y = world.height - heightWorld / scaleFactor
-//     if (y < 0)
-//       y = 0
-    
-//     // Wraparound view horizontally
-// //    if (x > world.width)
-// //      x -= world.width
-// //    if (x < 0)
-// //      x += world.width
+    // Set the position for the view and update the transform matrix
+    this.setPos(this.x, this.y)
+  }
 
-//     // Set the position for the view and update the transform matrix
-//     setPos(x, y)
-//   }
-
-//   // Set the position of the view within the world
-//   public void setPos(float xWorldp, float yWorldp) {
-//     xWorld = xWorldp
-//     yWorld = yWorldp
-//     // Update transform
-// //    tWorldToView.setTranslation(- xscale * xWorld, - yscale * yWorld)
-//     tWorldToView.setTranslation(- xscale * scaleFactor * xWorld, - yscale * scaleFactor * yWorld)
-//   }
+  // Set the position of the view within the world
+  setPos(xWorld, yWorld) {
+    this.xWorld = xWorld
+    this.yWorld = yWorld
+    // Update transform
+    // this.tWorldToView.setTranslation(- this.xscale * this.xWorld, - this.yscale * this.yWorld)
+    this.tWorldToView.setTranslation(- this.xscale * this.scaleFactor * this.xWorld, - this.yscale * this.scaleFactor * yWorld)
+  }
     
-//   // Draw a border around view
-//   //... this flickers, badly
-//   public void drawBorder(Graphics g) {
-//     g.drawRect(0, 0, widthPixels - 1, heightPixels - 1)
-//   }
-// }
+  // Draw a border around view
+  //... this flickers, badly
+  drawBorder(graphics) {
+    graphics.drawRect(0, 0, this.widthPixels - 1, this.heightPixels - 1)
+  }
+}
 
 
 
@@ -587,75 +593,73 @@ class World {
 
 
 //-----------------------------------------------------------------------------
-// * Land
+// Land
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the hills.
 // Land will wrap around when reaches the edges. 
+class Land extends Sprite {
 
+  // Initialize the land sprite, by making up random hills.
+  init(world) {
+    
+    this.world = world    
+    this.width = world.width
+    this.height = world.height
+    const hillHeight = this.height / 5 //. 20% of world height
+    
+    // Create random horizon line
+    const nPoints = 40
+    for (let i = 0; i < nPoints; i++) {
+      const x = this.width * i / (nPoints - 1)
+      const y = this.height - (Math.random() * hillHeight)
+      this.shapeModel.addPoint(x, y)
+      this.shapeModel.addLineTo(i)
+    }
 
-// class Land extends Sprite {
+    // Make space for a base
+    this.shapeModel.yPoints[29] = this.shapeModel.yPoints[30] = this.shapeModel.yPoints[31]
+    
+    // Make the last point the same as the first point so it will wrap around properly
+    this.shapeModel.yPoints[nPoints-1] = this.shapeModel.yPoints[0]
+    
+    // Set scale
+    this.setScale(1.0)
+  }
 
-//   // Initialize the land sprite, by making up random hills.
-//   public void init(World w) {
+  // Draw the land
+  draw(graphics, view) {
     
-//     world = w    
-//     int width = (int) world.width
-//     int height = (int) world.height
-//     int hillHeight = height / 5 //. 20% of world height
+    const shapeDraw = new ShapeX()
+    shapeDraw.copyFrom(this.shapeModel)
+    shapeDraw.transform(this.tModelToWorld)
+    shapeDraw.transform(view.tWorldToView)
+    shapeDraw.drawShape(graphics)
     
-//     // Create random horizon line
-//     int nPoints = 40
-//     for (int i = 0 i < nPoints i++) {
-//       int x = width * i / (nPoints - 1)
-//       int y = height - (int) (Math.random() * hillHeight)
-//       shapeModel.addPoint(x, y)
-//       shapeModel.addLineTo(i)
-//     }
-
-//     // Make space for a base
-//     shapeModel.yPoints[29] = shapeModel.yPoints[30] = shapeModel.yPoints[31]
-    
-//     // Make the last point the same as the first point so it will wrap around properly
-//     shapeModel.yPoints[nPoints-1] = shapeModel.yPoints[0]
-    
-//     // Set scale
-//     setScale(1.0f)
-//   }
-
-//   // Draw the land
-//   public void draw(Graphics g, View view) {
-    
-//     shapeDraw = new ShapeX()
-//     shapeDraw.copyFrom(shapeModel)
-//     shapeDraw.transform(tModelToWorld)
-//     shapeDraw.transform(view.tWorldToView)
-//     shapeDraw.drawShape(g)
-    
-//     // Repeat land off to the right
-//     if (view.xWorld > (world.width - view.widthWorld)) {
-//       ShapeX shape2 = new ShapeX()
-//       shape2.copyFrom(shapeModel)
-//       shape2.transform(tModelToWorld)
-//       Transform t = new Transform()
-//       t.setTranslation(world.width, 0)
-//       shape2.transform(t)
-//       shape2.transform(view.tWorldToView)
-//       shape2.drawShape(g)
-//     }
-//     // Repeat land off to the left
-//     if (view.xWorld < view.widthWorld) {
-//       ShapeX shape2 = new ShapeX()
-//       shape2.copyFrom(shapeModel)
-//       shape2.transform(tModelToWorld)
-//       Transform t = new Transform()
-//       t.setTranslation(-world.width, 0)
-//       shape2.transform(t)
-//       shape2.transform(view.tWorldToView)
-//       shape2.drawShape(g)
-//     }
-//   }  
-// }
+    // Repeat land off to the right
+    if (view.xWorld > (this.world.width - view.widthWorld)) {
+      const shape2 = new ShapeX()
+      shape2.copyFrom(shapeModel)
+      shape2.transform(tModelToWorld)
+      Transform t = new Transform()
+      t.setTranslation(world.width, 0)
+      shape2.transform(t)
+      shape2.transform(view.tWorldToView)
+      shape2.drawShape(g)
+    }
+    // Repeat land off to the left
+    if (view.xWorld < view.widthWorld) {
+      ShapeX shape2 = new ShapeX()
+      shape2.copyFrom(shapeModel)
+      shape2.transform(tModelToWorld)
+      Transform t = new Transform()
+      t.setTranslation(-world.width, 0)
+      shape2.transform(t)
+      shape2.transform(view.tWorldToView)
+      shape2.drawShape(g)
+    }
+  }  
+}
 
 
 //-----------------------------------------------------------------------------
