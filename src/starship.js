@@ -360,183 +360,181 @@ class View {
 
 
 //-----------------------------------------------------------------------------
-// * Ship
+// Ship
 //-----------------------------------------------------------------------------
 
 // A sprite to represent the ship
 // Also contains a flame sprite, to represent the flame. 
+//. extends Sprite
+class Ship {
 
+  constructor() {
+    // Attributes
+    this.massShip = 0 // [kg]
+    this.massFuel = 0 // [kg]
+    this.rotationUnit = 0 // [radians]
+    this.burnRate = 0 // [kg/s]
+    this.exhaustVelocity = 0 // [m/s] 
+    this.thrustUnit = 0 // [N]
+    this.throttle = 0 // 0 to 10. thrust = throttle * thrustunit
+    this.shipSize = 30.0 // rough size of ship
+    this.outOfFuel = false // flag
 
-// class Ship 
-//   extends Sprite {
+    this.flame = new Flame() // sprite representing flame
+  }
 
-//   // Attributes
-//   int massShip // [kg]
-//   int massFuel // [kg]
-//   float rotationUnit // [radians]
-//   float burnRate // [kg/s]
-//   float exhaustVelocity // [m/s] 
-//   float thrustUnit // [N]
-//   int throttle // 0 to 10. thrust = throttle * thrustunit
-//   float shipSize = 30.0f // rough size of ship
-//   boolean outOfFuel // flag
-
-//   Flame flame = new Flame() // sprite representing flame
+  // Initialize the ship
+  init(world) {
+    
+    this.world = world
   
-//   // Initialize the ship
-//   public void init(World w) {
+    // x = world.width / 5
     
-//     world = w
+    this.flame.init(world)
+    this.flame.ship = this
   
-// //    x = world.width / 5
+    this.massShip = 1000 // kg
+    this.massFuel = 5000 // kg
+    this.mass = this.massShip + this.massFuel
+    this.rotation = 0.0 // radians
+    this.rotationUnit = 1.0 * world.radiansPerDegree // degrees converted to radians
+    this.exhaustVelocity = 250.0 // m/s (approximately mach 1)
+    this.momentOfInertia = this.massShip * 2 * (25+15) * (1 - 1 / Math.sqrt(2)) // kg (about center of mass)
+
+    // Parallel axis theorem - For Mass Moments of Inertia 
+    // M : is the mass of the body. 
+    // d : is the perpendicuar distance between the centroidal axis and the parallel axis.  
+    // Ic is moment of inertia about center of mass
+    // Ip = Ic + M*d*d
     
-//     flame.init(w)
-//     flame.ship = this
+    // Calculate a burnRate that will balance out gravity at 
+    // throttle 5 and fuel tank half empty.
+    // this.burnRate = 1.0 // kg/s
+    this.burnRate = (world.g * this.massShip + (this.massFuel / 2.0)) / (5.0 * this.exhaustVelocity) // 2.8 kg/s for g=1m/s/s 
+    this.burnRate *= 6.0 //?
+    this.thrustUnit = this.burnRate * this.exhaustVelocity // kgm/s/s = newtons  
+    
+    // Define ship's vertices, in world units (meters)
+    this.shapeModel.addPoint(  0, -25) // 0
+    this.shapeModel.addPoint(-10,  10) // 1
+    this.shapeModel.addPoint( -7,   1) // 2
+    this.shapeModel.addPoint(-21,  15) // 3
+    this.shapeModel.addPoint( 10,  10) // 4
+    this.shapeModel.addPoint( 21,  15) // 5
+    this.shapeModel.addPoint(  7,   1) // 6
+    
+    // Define ship's shape with line segments
+    this.shapeModel.addLineTo(0)
+    this.shapeModel.addLineTo(1)
+    this.shapeModel.addLineTo(2)
+    this.shapeModel.addLineTo(3)
+    this.shapeModel.addLineTo(1)
+    this.shapeModel.addLineTo(4)
+    this.shapeModel.addLineTo(5)
+    this.shapeModel.addLineTo(6)
+    this.shapeModel.addLineTo(4)
+    this.shapeModel.addLineTo(0)
+    
+    this.setScale(1.0)
+    this.setRotation(this.rotation)
+  }
+
+  // Set the throttle level
+  setThrottle(throttle) {
+    if (this.outOfFuel)
+      this.throttle = 0
+    else
+      this.throttle = throttle
+  }
   
-//     massShip = 1000 // kg
-//     massFuel = 5000 // kg
-//     mass = massShip + massFuel
-//     rotation = 0.0f // radians
-//     rotationUnit = 1.0f * world.radiansPerDegree // degrees converted to radians
-//     exhaustVelocity = 250.0f // m/s (approximately mach 1)
-//     momentOfInertia = massShip * 2 * (25+15) * (1 - 1 / (float) Math.sqrt(2)) // kg (about center of mass)
+  // Move the ship according to its velocity, gravity, thrust, etc,
+  // and update the drawing shape.
+  step(timeStep) {
+    
+    // Get amount of fuel burned
+    const mass = this.massShip + this.massFuel
+    const fuelBurned = this.throttle * this.burnRate * timeStep
+    const thrust = this.throttle * this.thrustUnit
+    const thrustAccel = thrust / mass
+    
+    // Move ship according to gravity, thrust, etc.
+    this.ax = thrustAccel * Math.sin(this.rotation)
+    // this.ay = - thrustAccel * Math.cos(this.rotation) + this.world.g
+    this.ay = - thrustAccel * Math.cos(this.rotation)
 
-//     // Parallel axis theorem - For Mass Moments of Inertia 
-//     // M : is the mass of the body. 
-//     // d : is the perpendicuar distance between the centroidal axis and the parallel axis.  
-//     // Ic is moment of inertia about center of mass
-//     // Ip = Ic + M*d*d
-    
-//     // Calculate a burnRate that will balance out gravity at 
-//     // throttle 5 and fuel tank half empty.
-//     // burnRate = 1.0f // kg/s
-//     burnRate = (world.g * massShip + (massFuel / 2.0f)) / (5.0f * exhaustVelocity) // 2.8 kg/s for g=1m/s/s 
-//     burnRate *= 6.0f
-//     thrustUnit = burnRate * exhaustVelocity // kgm/s/s = newtons  
-    
-//     // Define ship's vertices, in world units (meters)
-//     shapeModel.addPoint(  0, -25) // 0
-//     shapeModel.addPoint(-10,  10) // 1
-//     shapeModel.addPoint( -7,   1) // 2
-//     shapeModel.addPoint(-21,  15) // 3
-//     shapeModel.addPoint( 10,  10) // 4
-//     shapeModel.addPoint( 21,  15) // 5
-//     shapeModel.addPoint(  7,   1) // 6
-    
-//     // Define ship's shape with line segments
-//     shapeModel.addLineTo(0)
-//     shapeModel.addLineTo(1)
-//     shapeModel.addLineTo(2)
-//     shapeModel.addLineTo(3)
-//     shapeModel.addLineTo(1)
-//     shapeModel.addLineTo(4)
-//     shapeModel.addLineTo(5)
-//     shapeModel.addLineTo(6)
-//     shapeModel.addLineTo(4)
-//     shapeModel.addLineTo(0)
-    
-//     setScale(1.0f)
-//     setRotation(rotation)
-//   }
+    // Update fuel remaining
+    this.massFuel -= fuelBurned
+    if (this.massFuel < 0) {
+      this.massFuel = 0
+      this.outOfFuel = true  
+    }
 
-//   // Set the throttle level
-//   public void setThrottle(int t) {
-//     if (outOfFuel)
-//       throttle = 0
-//     else
-//       throttle = t
-//   }
+    // Call base class
+    super.step(timeStep)
+  }
   
-//   // Move the ship according to its velocity, gravity, thrust, etc,
-//   // and update the drawing shape.
-//   public void step(float timeStep) {
+  //. Make the ship explode!
+  explode() {    
+    // draw orange and yellow circles filled for fire.
+    // create a bunch of sub-sprites for pieces of ship,
+    // give them all rnd velocities (plus ships velocity).
+    // on draw just draw these instead of the ship.
+    // on step move these instead of ship.
+    // ie make a ShipRemains object with a bunch of subobjects with different velocities?
+    // have them all stop at some depth under the horizon.
     
-//     // Get amount of fuel burned
-//     mass = massShip + massFuel
-//     float fuelBurned = throttle * burnRate * timeStep
-//     float thrust = throttle * thrustUnit
-//     float thrustAccel = thrust / mass
-    
-//     // Move ship according to gravity, thrust, etc.
-//     ax = thrustAccel * (float) Math.sin(rotation)
-//     // ay = - thrustAccel * (float) Math.cos(rotation) + world.g
-//     ay = - thrustAccel * (float) Math.cos(rotation)
+    // call super with a parameter for velocities etc
+    // replace existing sprite with child sprites.
+    // ie remove all line segments from this sprite. right?    
+    // super.explode()    
+  }  
 
-//     // Update fuel remaining
-//     massFuel -= fuelBurned
-//     if (massFuel < 0) {
-//       massFuel = 0
-//       outOfFuel = true  
-//     }
-
-//     // Call base class
-//     super.step(timeStep)
-//   }
+  // Draw ship stats
+  //. this flickers too much - don't call it
+  drawStats(graphics) {
+    //! format
+    // what is all this - where's printf?
+    // NumberFormat numberFormatter
+    // numberFormatter = NumberFormat.getNumberInstance(currentLocale)
+    // numberFormatter.format(amount)
+    let s
+    // s = "Position (m): (" + x + ", " + y + ")"
+    // g.drawString(s, 4, 22)
+    s = "Velocity (m/s): (" + Math.floor(this.vx*10)/10 + ", " + Math.floor(this.vy*10)/10 + ")"
+    graphics.drawString(s, 4, 22)
+    // s = "Acceleration (m/s/s): (" + ax + ", " + ay + ")"
+    // graphics.drawString(s, 4, 44)
+    // s = "Rotation: (" + rotation + ")"
+    // graphics.drawString(s, 4, 55)
+    // s = "Throttle: (" + throttle + ")"
+    // graphics.drawString(s, 4, 66)
+    s = "Fuel (kg): (" + this.massFuel + ")"
+    if (this.massFuel < 500)
+      graphics.setColor(Color.red)
+    graphics.drawString(s, 4, 33)
+    graphics.setColor(Color.black)
+    // s = "view pos: (" + polyDraw.xpoints[0] + ", " + polyDraw.ypoints[0] + ")"
+    // graphics.drawString(s, 4, 80)
+  }
   
-//   //. Make the ship explode!
-//   public void explode() {    
-//     // draw orange and yellow circles filled for fire.
-//     // create a bunch of sub-sprites for pieces of ship,
-//     // give them all rnd velocities (plus ships velocity).
-//     // on draw just draw these instead of the ship.
-//     // on step move these instead of ship.
-//     // ie make a ShipRemains object with a bunch of subobjects with different velocities?
-//     // have them all stop at some depth under the horizon.
+  // Draw ship according to the specified view transformations
+  draw(graphics, view) {
     
-//     // call super with a parameter for velocities etc
-
-//     // replace existing sprite with child sprites.
-//     // ie remove all line segments from this sprite. right? 
+    // Call base class to draw model
+    super.draw(graphics, view)
     
-// //    super.explode()    
-//   }  
-
-//   // Draw ship stats
-//   //. this flickers too much - don't call it
-//   public void drawStats(Graphics g) {
-//     //! format
-//     // what is all this - where's printf?
-//     // NumberFormat numberFormatter
-//     // numberFormatter = NumberFormat.getNumberInstance(currentLocale)
-//     // numberFormatter.format(amount)
-//     String s
-// //    s = "Position (m): (" + x + ", " + y + ")"
-// //    g.drawString(s, 4, 22)
-//     s = "Velocity (m/s): (" + Math.floor(vx*10)/10 + ", " + Math.floor(vy*10)/10 + ")"
-//     g.drawString(s, 4, 22)
-// //    s = "Acceleration (m/s/s): (" + ax + ", " + ay + ")"
-// //    g.drawString(s, 4, 44)
-// //    s = "Rotation: (" + rotation + ")"
-// //    g.drawString(s, 4, 55)
-// //    s = "Throttle: (" + throttle + ")"
-// //    g.drawString(s, 4, 66)
-//     s = "Fuel (kg): (" + massFuel + ")"
-//     if (massFuel < 500)
-//       g.setColor(Color.red)
-//     g.drawString(s, 4, 33)
-//     g.setColor(Color.black)
-//     // s = "view pos: (" + polyDraw.xpoints[0] + ", " + polyDraw.ypoints[0] + ")"
-//     // g.drawString(s, 4, 80)
-//   }
-  
-//   // Draw ship according to the specified view transformations
-//   public void draw(Graphics g, View view) {
-    
-//     // Call base class to draw model
-//     super.draw(g, view)
-    
-//     // Draw flame
-//     // how do we handle this? step could turn this subsprite on and off, ie set a flag in it
-//     // sprite.draw could check for subsprites and transform them the same as the
-//     // parent sprite, if the lock flag was set, otherwise would use their own transform
-//     // this would make it easier to have things detach, like rocket boosters, and let
-//     // them fall away - they would get same vel as ship, but only gravity would work on them.
-//     // also each sprite could have different colors, or each segment could?
-//     // might need to override draw for flame to get it to flicker correctly but that's okay
-//     if (throttle > 0)
-//       flame.draw(g, view)  
-//   }
-// }
+    // Draw flame
+    // how do we handle this? step could turn this subsprite on and off, ie set a flag in it
+    // sprite.draw could check for subsprites and transform them the same as the
+    // parent sprite, if the lock flag was set, otherwise would use their own transform
+    // this would make it easier to have things detach, like rocket boosters, and let
+    // them fall away - they would get same vel as ship, but only gravity would work on them.
+    // also each sprite could have different colors, or each segment could?
+    // might need to override draw for flame to get it to flicker correctly but that's okay
+    if (this.throttle > 0)
+      this.flame.draw(graphics, view)  
+  }
+}
 
 
 //-----------------------------------------------------------------------------
