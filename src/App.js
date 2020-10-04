@@ -8,10 +8,12 @@ function App() {
     const canvas = document.querySelector("canvas")
     const context = canvas.getContext("2d")
     starship.run(context)
+    canvas.onkeydown = event => starship.onKeyDown(event)
+    canvas.onkeyup = event => starship.onKeyUp(event)
   }, [])
   return (
     <div className="App">
-      <canvas width="800" height="400" />
+      <canvas width="800" height="400" tabIndex="1" />
     </div>
   );
 }

@@ -42,39 +42,38 @@ class App {
     // this.step()
   }
   
-  // keyPressed(e) {
-  //   switch (e.getKeyCode()) {
-  //     // debug:
-  //     // case KeyEvent.VK_A:
-  //       // world.bStop = true
-  //       // break
-  //     case KeyEvent.VK_LEFT:
-  //       this.rdelta = -this.rdeltaamount
-  //       break      
-  //     case KeyEvent.VK_RIGHT:
-  //       this.rdelta = this.rdeltaamount
-  //       break
-  //     case KeyEvent.VK_UP:
-  //       this.throttle = this.throttleamount
-  //       break
-  //     case KeyEvent.VK_DOWN:
-  //       this.throttle = -this.throttleamount
-  //       break
-  //   }    
-  // }
+  onKeyDown(event) {
+    switch (event.key) {
+      case 'a':
+        this.world.bStop = true
+        break
+      case 'ArrowLeft':
+        this.rdelta = -this.rdeltaamount
+        break
+      case 'ArrowRight':
+        this.rdelta = this.rdeltaamount
+        break
+      case 'ArrowUp':
+        this.throttle = this.throttleamount
+        break
+      case 'ArrowDown':
+        this.throttle = -this.throttleamount
+        break  
+      }
+  }
   
-  // keyReleased(e) {
-  //   switch (e.getKeyCode()) {
-  //     case KeyEvent.VK_LEFT:
-  //     case KeyEvent.VK_RIGHT:
-  //       this.rdelta = 0.0
-  //       break
-  //     case KeyEvent.VK_UP:
-  //     case KeyEvent.VK_DOWN:
-  //       this.throttle = 0
-  //       break
-  //   }    
-  // }
+  onKeyUp(event) {
+    switch (event.key) {
+      case 'ArrowLeft':
+      case 'ArrowRight':
+        this.rdelta = 0.0
+        break
+      case 'ArrowUp':
+      case 'ArrowDown':
+        this.throttle = 0
+        break
+    }    
+  }
   
   // keyTyped(e) {
   // }
