@@ -581,7 +581,6 @@ class Flame extends sprites.Sprite {
 
 // A sprite to represent the hills.
 // Land will wrap around when reaches the edges. 
-// class Land extends Sprite {
 class Land extends sprites.Sprite {
 
   // Initialize the land sprite, by making up random hills.
@@ -700,7 +699,8 @@ class Moon extends sprites.Sprite {
 
   constructor() {
     super()
-    this.diam = 40 // [m]
+    // this.diam = 40 // [m]
+    this.radius = 20 // [m]
   }
   
   init(world) {
@@ -714,7 +714,8 @@ class Moon extends sprites.Sprite {
     // use superclass to get shapeDraw
     // super.draw(graphics, view)
     graphics.setColor(Color.lightGray)
-    graphics.drawOval(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.diam, this.diam)    
+    // graphics.drawOval(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.diam, this.diam)
+    graphics.drawCircle(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.radius)
     graphics.setColor(Color.black)
   }
 }
@@ -761,7 +762,12 @@ class Graphics {
   clear() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
   }
-  drawOval() {
+  drawOval(x, y, dx, dy) {
+  }
+  drawCircle(x, y, radius) {
+    this.context.beginPath()
+    this.context.arc(x, y, radius, 0, 2 * Math.PI)
+    this.context.stroke()
   }
   drawLine(x0, y0, x1, y1) {
     this.context.beginPath()
