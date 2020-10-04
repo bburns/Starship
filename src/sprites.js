@@ -106,9 +106,9 @@ export class Sprite {
   // Check for a collision between this sprite and the specified sprite. 
   // Returns a Point2D with intersection or null.
   checkCollision(other, graphics) {
-    console.log('checkCollision', this, other)
+    // console.log('checkCollision', this, other)
     const pointIntersect = this.shapeDraw.intersectsShape(other.shapeDraw, graphics)
-    console.log(pointIntersect)
+    // console.log(pointIntersect)
     if (pointIntersect) return pointIntersect
     for (const child of this.children) {
       const pointIntersect = child.shapeDraw.intersectsShape(other.shapeDraw, graphics)
@@ -219,7 +219,6 @@ export class ShapeX {
   }
   
   // Copy another shape into this one
-  // copyFrom(ShapeX p) {
   copyFrom(other) {
     // console.log('copyfrom', other, 'to', this)
     // for (let i = 0; i < other.nPoints; i++) {
@@ -242,7 +241,6 @@ export class ShapeX {
   // Transform this shape by the given 2d transform.
   // Includes scale, rotate, and translate.
   // Just need to transform the points and the bounding box.
-  // transform(Transform t) {
   transform(transform) {
     for (let i = 0; i < this.nPoints; i++) {
       const x = this.xPoints[i]
@@ -273,25 +271,20 @@ export class ShapeX {
       // Get line segment
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        seg2.drawSegment(graphics, 'orange') //. debug
+        // seg2.drawSegment(graphics, 'orange') //. debug
         // seg2.drawBoundingBox(graphics, 'orange') //. debug
-        // continue
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            seg1.drawSegment(graphics, 'blue') //. debug
+            // seg1.drawSegment(graphics, 'red') //. debug
             // seg1.drawBoundingBox(graphics, 'red') //. debug
-            // pause here for key strike - if "a" then break here
-            // if (w.getKeyPress() == KeyEvent.VK_A) {
-              // int p = 0 // put breakpoint here
-            // }
-            // return
             const pointIntersect = seg1.getIntersection(seg2)
-            if (pointIntersect) console.log('intersect', seg1, seg2, pointIntersect)
-            return pointIntersect
+            if (pointIntersect) {
+              console.log('intersect', seg1, seg2, pointIntersect)
+              return pointIntersect
+            }
           }
-          // continue
-        }
+        } 
       }
     }
     return null
@@ -433,7 +426,7 @@ export class Segment {
     // both line segments bounding boxes.
     const x = (this.b * other.c - other.b * this.c) / denom
     const y = (this.c * other.a - other.c * this.a) / denom
-    console.log(x, this.x1, this.x2)
+    // console.log(x, this.x1, this.x2)
     if (!this.pointInBounds(x, y)) return null
     if (!other.pointInBounds(x, y)) return null
     // Must be on both line segments so return intersection
