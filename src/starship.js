@@ -214,11 +214,10 @@ class World {
     }
     
     // Check for collisions between the ship and land.
-    // console.log("collide land?")
     pointIntersect = this.ship.checkCollision(this.land, graphics)
-    // console.log(pointIntersect)
     if (pointIntersect) {
       console.log("COLLISION LAND")
+
       // Draw a spark at the point of intersection (a small red circle)
       let r = 5
       graphics.setColor(Color.red)
@@ -412,7 +411,6 @@ class Ship extends sprites.Sprite {
     this.shapeModel.addPoint( 10,  10) // 4
     this.shapeModel.addPoint( 21,  15) // 5
     this.shapeModel.addPoint(  7,   1) // 6
-    // this.shapeModel.addPoint( 0, 25) // 1
     
     // Define ship's shape with line segments
     this.shapeModel.addLineTo(0)
@@ -606,19 +604,13 @@ class Land extends sprites.Sprite {
     }
 
     // Make space for a base
-    const nBase = Math.floor(nPoints * 2/3)
-    // this.shapeModel.yPoints[29] = this.shapeModel.yPoints[30] = this.shapeModel.yPoints[31]
-    this.shapeModel.yPoints[nBase] = this.shapeModel.yPoints[nBase+1] = this.shapeModel.yPoints[nBase+2]
+    this.nBase = Math.floor(nPoints * Math.random())
+    this.shapeModel.yPoints[this.nBase] = 
+      this.shapeModel.yPoints[this.nBase+1] = 
+      this.shapeModel.yPoints[this.nBase+2]
     
     // Make the last point the same as the first point so it will wrap around properly
     this.shapeModel.yPoints[nPoints-1] = this.shapeModel.yPoints[0]
-
-    
-    // //. plain horizontal line
-    // this.shapeModel.addPoint(0, this.height - hillHeight)
-    // this.shapeModel.addPoint(this.width, this.height - hillHeight)
-    // this.shapeModel.addLineTo(0)
-    // this.shapeModel.addLineTo(1)
 
     // Set scale
     this.setScale(1.0)
@@ -673,11 +665,11 @@ class Base extends sprites.Sprite {
     this.height = world.height
     this.hillHeight = this.height / 5 //. 20% of world height
 
-    const iLast = world.land.shapeModel.xPoints.length - 1
-    this.x = world.land.shapeModel.xPoints[iLast]
+    const nBase = world.land.nBase
+    this.x = world.land.shapeModel.xPoints[nBase]
     this.xw = this.width / 20
     
-    this.y = world.land.shapeModel.yPoints[iLast]
+    this.y = world.land.shapeModel.yPoints[nBase]
     this.yw = this.height / 40
     
     this.shapeModel.addPoint(this.x, this.y)
