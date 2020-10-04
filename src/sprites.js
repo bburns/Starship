@@ -27,7 +27,6 @@ export class Sprite {
     this.tModelToWorld = new Transform() // transformation from model coordinates to world coordinates
     this.shapeModel = new ShapeX() // model shape in model coordinates
     this.shapeDraw = new ShapeX() // model that will be transformed to view coordinates
-    // this.children = new Vector() // vector of child sprites
     this.children = [] // vector of child sprites
   }
 
@@ -54,7 +53,7 @@ export class Sprite {
   step(timeStep) {
     
     // Add acceleration due to gravity
-    //, um, rather hardcoded
+    //. move this elsewhere
     this.ay += this.world.g
     
     // Integrate
@@ -118,7 +117,7 @@ export class Sprite {
 
   // Make the sprite explode!
   explode() {
-    //, default behavior will scatter the linesegments that make up 
+    //. default behavior will scatter the linesegments that make up 
     // the sprite, add flames, etc.
     
     const s = new Sprite()
@@ -146,11 +145,10 @@ export class Sprite {
     // using the sprite transformation, then convert to view coordinates 
     // using the view transformation.
     // Can combine these into one transform for speed.
-    const shapeDraw = new ShapeX()
-    shapeDraw.copyFrom(this.shapeModel)
-    shapeDraw.transform(this.tModelToWorld)
-    shapeDraw.transform(view.tWorldToView)
-    shapeDraw.drawShape(graphics)
+    this.shapeDraw.copyFrom(this.shapeModel)
+    this.shapeDraw.transform(this.tModelToWorld)
+    this.shapeDraw.transform(view.tWorldToView)
+    this.shapeDraw.drawShape(graphics)
     
     // Now draw any child sprites
     for (const child of this.children) {
@@ -263,19 +261,18 @@ export class ShapeX {
   
   // See if this shape intersects anywhere with the given shape -
   // returns Point2D with intersection or null.
-  // If they do, returns true and fills pointIntersect with the point where they touch.
-  // intersectsShape(ShapeX shape2, Point2D pointIntersect, Graphics g) {
-  // intersectsShape(shape2, pointIntersect, graphics) {
   intersectsShape(shape2, graphics) {
-    
-    // Walk through s's line segments and see if they intersect with our line segments.
-    // Check if the point is within the bounding box of this sprite - 
+    // Walk through shape2's line segments and see if they intersect with 
+    // our line segments.
+    // This is O(n^2) so won't scale.
+    //. first should check if the point is within the bounding box of this sprite - 
     // (x - bounds, y - bounds) to (x + bounds, y + bounds).
     for (let i = 0; i < shape2.nLines - 1; i++) {
       // Get line segment
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        seg2.drawSegment(graphics, 'orange') //. debug
+        // seg2.drawSegment(graphics, 'orange') //. debug
+        seg2.drawBoundingBox(graphics, 'orange') //. debug
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
@@ -285,16 +282,10 @@ export class ShapeX {
               // int p = 0 // put breakpoint here
             // }
             const pointIntersect = seg1.getIntersection(seg2)
-            if (pointIntersect) {
-              // debug:
-              // graphics.setColor(Color.blue)
-              // seg1.drawSegment(graphics)
-              // graphics.setColor(Color.green)
-              // seg2.drawSegment(graphics)
-            }
+            console.log('intersect', seg1, seg2, pointIntersect)
             return pointIntersect
           }
-        }      
+        }
       }
     }
     return null
@@ -422,26 +413,27 @@ export class Segment {
   // See if this line segment intersects the given line segment.
   // Returns a Point2D object of the intersect point if segments intersect, 
   // or null if they don't.
-  getIntersection(segment) {
+  getIntersection(other) {
     // Get equations describing lines (ax + bx = c),
     // then solve for a point - if no solution, no intersection.
     this.getLineParameters()
-    segment.getLineParameters()
-    const denom = this.b * segment.a - segment.b * this.a
+    other.getLineParameters()
+    const denom = this.b * other.a - other.b * this.a
     // If denominator is zero, no solution, so no intersection (ie lines are parallel)
     // You can see that the slopes are the same because if a/b == a'/b' then denom=0
     if (denom === 0)
       return null
     // Now check if intersecting point is actually within both line segments
-    const x = (this.b * segment.c - segment.b * this.c) / denom
-    const y = (this.c * segment.a - segment.c * this.a) / denom
-    //.. don't know relative positions of p1 and p2, so must account for that also!
-    // if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line segment
-    // if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment s either
+    const x = (this.b * other.c - other.b * this.c) / denom
+    const y = (this.c * other.a - other.c * this.a) / denom
+    console.log(x, y)
+    //. don't know relative positions of p1 and p2, so must account for that also [?]
+    // if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line other
+    // if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment either
     if (this.pointInBounds(x, y) === false) return null
-    if (segment.pointInBounds(x, y) === false) return null
+    if (other.pointInBounds(x, y) === false) return null
     // Must be on both line segments so return intersection
-    const intersectPoint = Point2D(x, y)
+    const intersectPoint = new Point2D(x, y)
     return intersectPoint
   }
 
@@ -483,6 +475,11 @@ export class Segment {
   drawSegment(graphics, color) {
     if (color) graphics.setForeground(color)
     graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
+  }
+
+  drawBoundingBox(graphics, color) {
+    if (color) graphics.setForeground(color)
+    graphics.drawBox(this.x1, this.y1, this.x2, this.y2)
   }
 }
 

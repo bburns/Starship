@@ -182,6 +182,7 @@ class World {
 
   // Check for collisions
   checkCollisions(graphics) {
+    console.log(this.land.shapeDraw)
 
     // Check for ship-base collision = bad or good depending on speed
     const pointIntersect = this.ship.checkCollision(this.base, graphics)
@@ -209,6 +210,7 @@ class World {
     
     // Check for collisions between the ship and land.
     else {
+      console.log(this.land)
       const pointIntersect = this.ship.checkCollision(this.land, graphics)
       // console.log(pointIntersect)
       if (pointIntersect) {
@@ -561,8 +563,8 @@ class Flame extends sprites.Sprite {
       graphics.setColor(Color.orange)
 
     // Draw shape using base class
-    // super.draw(g, view)    
-    this.shapeDraw = new sprites.ShapeX()
+    // super.draw(graphics, view)    
+    // this.shapeDraw = new sprites.ShapeX()
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.ship.tModelToWorld)
     this.shapeDraw.transform(this.view.tWorldToView)
@@ -613,11 +615,10 @@ class Land extends sprites.Sprite {
   // Draw the land
   draw(graphics, view) {
     
-    const shapeDraw = new sprites.ShapeX()
-    shapeDraw.copyFrom(this.shapeModel)
-    shapeDraw.transform(this.tModelToWorld)
-    shapeDraw.transform(view.tWorldToView)
-    shapeDraw.drawShape(graphics)
+    this.shapeDraw.copyFrom(this.shapeModel)
+    this.shapeDraw.transform(this.tModelToWorld)
+    this.shapeDraw.transform(view.tWorldToView)
+    this.shapeDraw.drawShape(graphics)
     
     // Repeat land off to the right
     if (view.xWorld > (this.world.width - view.widthWorld)) {
@@ -681,11 +682,10 @@ class Base extends sprites.Sprite {
 
   // Draw the base
   draw(graphics, view) {
-    const shapeDraw = new sprites.ShapeX()
-    shapeDraw.copyFrom(this.shapeModel)
-    shapeDraw.transform(this.tModelToWorld)
-    shapeDraw.transform(view.tWorldToView)
-    shapeDraw.drawShape(graphics)
+    this.shapeDraw.copyFrom(this.shapeModel)
+    this.shapeDraw.transform(this.tModelToWorld)
+    this.shapeDraw.transform(view.tWorldToView)
+    this.shapeDraw.drawShape(graphics)
   }  
 }
 
@@ -773,6 +773,11 @@ class Graphics {
     this.context.beginPath()
     this.context.moveTo(x0, y0)
     this.context.lineTo(x1, y1)
+    this.context.stroke()
+  }
+  drawBox(x0, y0, x1, y1) {
+    this.context.beginPath()
+    this.context.rect(x0, y0, x1-x0, y1-y0)
     this.context.stroke()
   }
 }
