@@ -106,7 +106,9 @@ export class Sprite {
   // Check for a collision between this sprite and the specified sprite. 
   // Returns a Point2D with intersection or null.
   checkCollision(other, graphics) {
+    console.log('checkCollision', this, other)
     const pointIntersect = this.shapeDraw.intersectsShape(other.shapeDraw, graphics)
+    console.log(pointIntersect)
     if (pointIntersect) return pointIntersect
     for (const child of this.children) {
       const pointIntersect = child.shapeDraw.intersectsShape(other.shapeDraw, graphics)
@@ -271,18 +273,19 @@ export class ShapeX {
       // Get line segment
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        // seg2.drawSegment(graphics, 'orange') //. debug
+        seg2.drawSegment(graphics, 'orange') //. debug
         // seg2.drawBoundingBox(graphics, 'orange') //. debug
         // continue
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            // seg1.drawSegment(graphics, 'blue') //. debug
+            seg1.drawSegment(graphics, 'blue') //. debug
             // seg1.drawBoundingBox(graphics, 'red') //. debug
             // pause here for key strike - if "a" then break here
             // if (w.getKeyPress() == KeyEvent.VK_A) {
               // int p = 0 // put breakpoint here
             // }
+            // return
             const pointIntersect = seg1.getIntersection(seg2)
             if (pointIntersect) console.log('intersect', seg1, seg2, pointIntersect)
             return pointIntersect

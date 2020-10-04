@@ -189,19 +189,19 @@ class World {
     // Check for ship-base collision = bad or good depending on speed
     const pointIntersect = this.ship.checkCollision(this.base, graphics)
     if (pointIntersect) {
-      console.log("COLLISION")
+      console.log("COLLISIONBASE")
       // Draw a spark at the point of intersection (a small green circle)
-      let w = 5
+      let r = 10
       graphics.setColor(Color.green)
       // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
-      graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
+      graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
       
       // Ship should explode if above a certain velocity
       if ((this.ship.vy*this.ship.vy + this.ship.vx*this.ship.vx) > 25) {
-        w = 40
+        r = 20
         graphics.setColor(Color.orange)
         // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
-        graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
+        graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
         console.log("explode ship")
         this.ship.explode()
       }
@@ -213,15 +213,16 @@ class World {
     
     // Check for collisions between the ship and land.
     else {
-      console.log("collide land?", this.land)
+      console.log("collide land?")
       const pointIntersect = this.ship.checkCollision(this.land, graphics)
       // console.log(pointIntersect)
       if (pointIntersect) {
+        console.log("COLLISIONLAND")
         // Draw a spark at the point of intersection (a small red circle)
-        let w = 5
+        let r = 5
         graphics.setColor(Color.red)
         // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
-        graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
+        graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
 
         // Impart momentum to the ship
         //. a certain amount of energy will go into deforming soil and ship
@@ -569,7 +570,6 @@ class Flame extends sprites.Sprite {
 
     // Draw shape using base class
     // super.draw(graphics, view)    
-    // this.shapeDraw = new sprites.ShapeX()
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.ship.tModelToWorld)
     this.shapeDraw.transform(this.view.tWorldToView)
@@ -630,6 +630,7 @@ class Land extends sprites.Sprite {
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.tModelToWorld)
     this.shapeDraw.transform(view.tWorldToView)
+    graphics.setColor(Color.black)
     this.shapeDraw.drawShape(graphics)
     
     // Repeat land off to the right
@@ -695,6 +696,7 @@ class Base extends sprites.Sprite {
 
   // Draw the base
   draw(graphics, view) {
+    graphics.setColor(Color.black)
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.tModelToWorld)
     this.shapeDraw.transform(view.tWorldToView)
@@ -737,18 +739,16 @@ class Moon extends sprites.Sprite {
 // Stars
 //-----------------------------------------------------------------------------
 
-// sprites
-class Stars {
-}
+// class Stars extends sprites.Sprite {
+// }
 
 
 //-----------------------------------------------------------------------------
 // Clouds
 //-----------------------------------------------------------------------------
 
-// sprites
-class Clouds {
-}
+// class Clouds extends sprites.Sprite {
+// }
 
 
 
