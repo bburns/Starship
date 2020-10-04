@@ -106,16 +106,12 @@ export class Sprite {
   
   // Check for a collision between this sprite and the specified sprite. 
   // Returns a Point2D with intersection or null.
-  // checkCollision(other, pointIntersect, graphics) {
   checkCollision(other, graphics) {
-    // return shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)
-    // if (this.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
-    const intersectPoint = this.shapeDraw.intersectsShape(other.shapeDraw, graphics)
-    if (intersectPoint) return intersectPoint
+    const pointIntersect = this.shapeDraw.intersectsShape(other.shapeDraw, graphics)
+    if (pointIntersect) return pointIntersect
     for (const child of this.children) {
-      // if (child.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
-      const intersectPoint = child.shapeDraw.intersectsShape(other.shapeDraw, graphics)
-      if (intersectPoint) return intersectPoint
+      const pointIntersect = child.shapeDraw.intersectsShape(other.shapeDraw, graphics)
+      if (pointIntersect) return pointIntersect
     }    
     return null
   }
@@ -279,30 +275,28 @@ export class ShapeX {
       // Get line segment
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        // seg2.drawSegment(graphics, 'orange') //. debug
+        seg2.drawSegment(graphics, 'orange') //. debug
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            // seg1.drawSegment(graphics, 'blue') //. debug
+            seg1.drawSegment(graphics, 'blue') //. debug
             // pause here for key strike - if "a" then break here
             // if (w.getKeyPress() == KeyEvent.VK_A) {
               // int p = 0 // put breakpoint here
             // }
-            // if (seg1.getIntersection(seg2, pointIntersect)) {
-            //   // debug:
-            //   // g.setColor(Color.blue)
-            //   // seg1.drawSegment(g)  
-            //   // g.setColor(Color.green)
-            //   // seg2.drawSegment(g)  
-            //   return true
-            // }
             const pointIntersect = seg1.getIntersection(seg2)
+            if (pointIntersect) {
+              // debug:
+              // graphics.setColor(Color.blue)
+              // seg1.drawSegment(graphics)
+              // graphics.setColor(Color.green)
+              // seg2.drawSegment(graphics)
+            }
             return pointIntersect
           }
         }      
       }
     }
-    // return false
     return null
   }
 
@@ -487,7 +481,7 @@ export class Segment {
 
   // Draw this linesegment with the given optional color
   drawSegment(graphics, color) {
-    if (color) graphics.setColor(color)
+    if (color) graphics.setForeground(color)
     graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
   }
 }

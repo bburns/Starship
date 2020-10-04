@@ -79,17 +79,11 @@ class App {
   // }
 
   step() {
-    // Adjust ship rotation and throttle 
     this.world.ship.rotate(this.rdelta)
     this.world.ship.setThrottle(this.throttle)
-    
-    // Advance sprites
     this.world.step(this.timeStep)
-    
-    this.graphics.clear()
-
-    // Draw the world and everything in it
     this.world.draw(this.graphics)
+    this.world.checkCollisions(this.graphics)
   }
 }
 
@@ -167,9 +161,11 @@ class World {
   }
   
   // Draw the world and all the sprites it contains
-  //... move collision to another fn
   draw(graphics) {
-    
+
+    // Clear canvas
+    graphics.clear()
+
     // Draw sprites
     this.moon.draw(graphics, this.viewMain)
     this.land.draw(graphics, this.viewMain)
@@ -179,15 +175,15 @@ class World {
     // this.clouds.draw(graphics, this.viewMain)
 
     // Draw stats and border
-//    viewMain.drawBorder(graphics) // flickers
-//    this.ship.drawStats(graphics) // flickers
+    // this.viewMain.drawBorder(graphics) // flickers
+    // this.ship.drawStats(graphics) // flickers
+  }
 
-    // Check for collisions
-    // Must do after drawing.
-    // const pointIntersect = new sprites.Point2D() // intersection point used in collision testing
-    
+
+  // Check for collisions
+  checkCollisions(graphics) {
+
     // Check for ship-base collision = bad or good depending on speed
-    // if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
     const pointIntersect = this.ship.checkCollision(this.base, graphics)
     if (pointIntersect) {
       
@@ -212,9 +208,9 @@ class World {
     }
     
     // Check for collisions between the ship and land.
-    // else if (this.ship.checkCollision(this.land, pointIntersect, graphics)) {
     else {
       const pointIntersect = this.ship.checkCollision(this.land, graphics)
+      // console.log(pointIntersect)
       if (pointIntersect) {
         // Draw a spark at the point of intersection (a small red circle)
         let w = 5
@@ -230,6 +226,7 @@ class World {
         // this.ship.explode()
       }
     }
+
   }
 }
 
