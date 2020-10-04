@@ -93,7 +93,6 @@ export class Sprite {
   // Set the rotation amount for the ship in radians and update the 
   // drawing polygon.
   setRotation(rotation) {
-    console.log('setrotation', rotation)
     this.rotation = rotation
     this.tModelToWorld.setRotation(rotation)
   }
@@ -154,7 +153,6 @@ export class Sprite {
     shapeDraw.copyFrom(this.shapeModel)
     shapeDraw.transform(this.tModelToWorld)
     shapeDraw.transform(view.tWorldToView)
-    console.log(this.shapeModel)
     shapeDraw.drawShape(graphics)
     
     // Now draw any child sprites
@@ -249,7 +247,6 @@ export class ShapeX {
   // Just need to transform the points and the bounding box.
   // transform(Transform t) {
   transform(transform) {
-    console.log(transform)
     for (let i = 0; i < this.nPoints; i++) {
       const x = this.xPoints[i]
       const y = this.yPoints[i]
@@ -316,7 +313,7 @@ export class ShapeX {
     const nPoint = this.nLine[iLine]
     const nPoint2 = this.nLine[iLine+1]
     // First make sure we have a segment
-    if ((nPoint != -1) && (nPoint2 != -1)) {
+    if ((nPoint !== -1) && (nPoint2 !== -1)) {
       segment.x1 = this.xPoints[nPoint]
       segment.y1 = this.yPoints[nPoint]
       segment.x2 = this.xPoints[nPoint2]
@@ -336,7 +333,7 @@ export class ShapeX {
     for (let i = 0; i < this.nLines; i++) {
       const nPoint = this.nLine[i]
       // Check for start of a new line segment
-      if (nPoint == -1)
+      if (nPoint === -1)
         start = true
       else {
         // Draw a line to the next point
@@ -447,8 +444,8 @@ export class Segment {
     //.. don't know relative positions of p1 and p2, so must account for that also!
 //    if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line segment
 //    if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment s either
-    if (this.pointInBounds(x, y) == false) return false
-    if (segment.pointInBounds(x, y) == false) return false
+    if (this.pointInBounds(x, y) === false) return false
+    if (segment.pointInBounds(x, y) === false) return false
     // Must be on both line segments so set point and return true!
     point2d.x = x
     point2d.y = y
@@ -477,7 +474,7 @@ export class Segment {
   // bug: didn't convert integers to floats before doing math!!
   // bug: nasty - reversed equations for slope - resulted in sporadic errors. hard to find.
   getLineParameters() {
-    if (this.x1 != this.x2) {
+    if (this.x1 !== this.x2) {
       this.a = ((this.y2 - this.y1)) / ((this.x1 - this.x2))
       this.b = 1.0
       this.c = this.a * this.x1 + this.b * this.y1
@@ -489,11 +486,11 @@ export class Segment {
     }
   }
 
-  // Draw this linesegment
-  // drawSegment(Graphics g) {
-  drawSegment(graphics) {
-    graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
-  }
+  // // Draw this linesegment
+  // // drawSegment(Graphics g) {
+  // drawSegment(graphics) {
+  //   graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
+  // }
   
   // Draw this linesegment with the given color
   //! use optional color param??

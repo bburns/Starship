@@ -13,38 +13,6 @@
 import * as sprites from './sprites'
 
 
-// mimic Java's graphics context
-class Graphics {
-  constructor(context) {
-    this.context = context
-  }
-  setBackground(name) {
-    // const color = Color[name]
-  }
-  setForeground(name) {
-    const color = Color[name]
-    this.context.strokeStyle = color
-  }
-  setColor(name) {
-  }
-  drawOval() {
-  }
-  drawLine(x0, y0, x1, y1) {
-    console.log('drawline', x0,y0,x1,y1)
-    this.context.beginPath()
-    this.context.moveTo(x0, y0)
-    this.context.lineTo(x1, y1)
-    this.context.stroke()
-  }
-}
-
-const Color = {
-  white: '#fff',
-  black: '#000',
-  green: '#0f0',
-  orange: '#f80',
-  lightGray: '#eee',
-}
 
 
 
@@ -68,7 +36,6 @@ class App {
   
   // Initialize the applet
   run(context) {
-    console.log(context)
 
     this.context = context
     this.graphics = new Graphics(context)
@@ -801,5 +768,39 @@ class Clouds {
 // main
 //-----------------------------------------------------------------------------
 
+// mimic Java's graphics context
+class Graphics {
+  constructor(context) {
+    this.context = context
+  }
+  setBackground(name) {
+    // const color = Color[name]
+  }
+  setForeground(name) {
+    const color = Color[name]
+    this.context.strokeStyle = color
+  }
+  setColor(name) {
+  }
+  drawOval() {
+  }
+  drawLine(x0, y0, x1, y1) {
+    this.context.beginPath()
+    this.context.moveTo(x0, y0)
+    this.context.lineTo(x1, y1)
+    this.context.stroke()
+  }
+}
+
+const Color = {
+  white: '#fff',
+  black: '#000',
+  green: '#0f0',
+  orange: '#f80',
+  lightGray: '#eee',
+}
+
+
 const app = new App()
 export default app
+
