@@ -27,13 +27,14 @@ class Graphics {
     this.context.strokeStyle = color
   }
   setColor(name) {
-
   }
   drawOval() {
-
   }
-  drawLine() {
-
+  drawLine(x0, y0, x1, y1) {
+    this.context.beginPath()
+    this.context.moveTo(x0, y0)
+    this.context.lineTo(x1, y1)
+    this.context.stroke()
   }
 }
 
