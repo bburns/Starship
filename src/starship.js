@@ -38,7 +38,8 @@ class App {
 
     // this.addKeyListener(this)
 
-    setInterval(this.step.bind(this), this.timeStep*1000)
+    // setInterval(this.step.bind(this), this.timeStep*1000)
+    this.step()
   }
   
   // keyPressed(e) {
@@ -145,7 +146,8 @@ class World {
     // this.clouds.init(this)
     
     // Put ship in middle of world
-    this.ship.setPos(this.width / 2.0, this.height / 2.0)
+    // this.ship.setPos(this.width / 2.0, this.height / 2.0)
+    this.ship.setPos(this.width / 2.0, this.height * 5/6)
 
     //, Tell view to track the ship sprite
     // this.view.trackSprite(this.ship)
@@ -181,13 +183,13 @@ class World {
 
 
   // Check for collisions
+  // no return value
   checkCollisions(graphics) {
-    console.log(this.land.shapeDraw)
 
     // Check for ship-base collision = bad or good depending on speed
     const pointIntersect = this.ship.checkCollision(this.base, graphics)
     if (pointIntersect) {
-      
+      console.log("COLLISION")
       // Draw a spark at the point of intersection (a small green circle)
       let w = 5
       graphics.setColor(Color.green)
@@ -202,7 +204,7 @@ class World {
         this.ship.explode()
       }
       
-      // always stop the ship?
+      //. always stop the ship?
       this.ship.vx = 0 
       this.ship.vy = 0 
       

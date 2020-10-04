@@ -54,7 +54,7 @@ export class Sprite {
     
     // Add acceleration due to gravity
     //. move this elsewhere
-    this.ay += this.world.g
+    // this.ay += this.world.g
     
     // Integrate
     //. too primitive - fix this
@@ -272,11 +272,13 @@ export class ShapeX {
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
         // seg2.drawSegment(graphics, 'orange') //. debug
-        seg2.drawBoundingBox(graphics, 'orange') //. debug
+        // seg2.drawBoundingBox(graphics, 'orange') //. debug
+        // continue
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            seg1.drawSegment(graphics, 'blue') //. debug
+            // seg1.drawSegment(graphics, 'blue') //. debug
+            // seg1.drawBoundingBox(graphics, 'red') //. debug
             // pause here for key strike - if "a" then break here
             // if (w.getKeyPress() == KeyEvent.VK_A) {
               // int p = 0 // put breakpoint here
@@ -285,6 +287,7 @@ export class ShapeX {
             console.log('intersect', seg1, seg2, pointIntersect)
             return pointIntersect
           }
+          // continue
         }
       }
     }
@@ -426,12 +429,9 @@ export class Segment {
     // Now check if intersecting point is actually within both line segments
     const x = (this.b * other.c - other.b * this.c) / denom
     const y = (this.c * other.a - other.c * this.a) / denom
-    console.log(x, y)
-    //. don't know relative positions of p1 and p2, so must account for that also [?]
-    // if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line other
-    // if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment either
-    if (this.pointInBounds(x, y) === false) return null
-    if (other.pointInBounds(x, y) === false) return null
+    console.log(x, this.x1, this.x2)
+    if (!this.pointInBounds(x, y)) return null
+    if (!other.pointInBounds(x, y)) return null
     // Must be on both line segments so return intersection
     const intersectPoint = new Point2D(x, y)
     return intersectPoint
