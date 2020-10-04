@@ -1,13 +1,13 @@
 //-----------------------------------------------------------------------------
-// starship.js
-// A moon lander applet
+// Starship
+// A Starship launch and landing simulator
 // Note: all units are kg, meters, m/s, m/s/s, radians, newtons, etc.  
 //
 // Author: Brian Burns
 // History:
 //   version 0.1  2001-05  no base, bounces on surface
 //   version 0.2  2012-05  adding base, realistic collisions
-//   version 0.3  2020-10  converting to javascript
+//   version 0.3  2020-10  converting from java to javascript
 //-----------------------------------------------------------------------------
 
 import * as sprites from './sprites'
@@ -15,6 +15,26 @@ import * as sprites from './sprites'
 
 // mimic Java's graphics context
 class Graphics {
+  constructor(context) {
+    this.context = context
+    console.log(this, context)
+  }
+  setBackground(name) {
+    // const color = Color[name]
+  }
+  setForeground(name) {
+    const color = Color[name]
+    this.context.strokeStyle = color
+  }
+  setColor(name) {
+
+  }
+  drawOval() {
+
+  }
+  drawLine() {
+
+  }
 }
 
 const Color = {
@@ -22,6 +42,7 @@ const Color = {
   black: '#000',
   green: '#0f0',
   orange: '#f80',
+  lightGray: '#eee',
 }
 
 
@@ -46,21 +67,26 @@ class App {
   
   // Initialize the applet
   run(context) {
-  
+    console.log(context)
+
     this.context = context
-    this.graphics = new Graphics(this.canvas)
+    // this.graphics = new Graphics(this.canvas)
+    this.graphics = new Graphics(context)
     
     // Initialize world and all the sprites it contains
     // this.world.init(this.getSize().width, this.getSize().height)
     this.world.init(context.canvas.width, context.canvas.height)
 
-    // context.setBackground(Color.white)
-    // context.strokeStyle = '#000'
+    console.log(this.graphics)
+    this.graphics.setBackground(Color.white)
+    this.graphics.setForeground(Color.black)
 
     // this.addKeyListener(this)
     
     // this.thisThread = new Thread(this)
     // this.thisThread.start()
+
+    this.step()
   }
   
   // keyPressed(e) {
@@ -74,7 +100,7 @@ class App {
   //       break      
   //     case KeyEvent.VK_RIGHT:
   //       this.rdelta = this.rdeltaamount
-  //       break      
+  //       break
   //     case KeyEvent.VK_UP:
   //       this.throttle = this.throttleamount
   //       break
@@ -120,6 +146,8 @@ class App {
       // this.repaint()
       // this.graphics.repaint()
       this.world.draw(this.graphics)
+
+      break
     }
   }
 
@@ -670,7 +698,7 @@ class Land extends sprites.Sprite {
     if (view.xWorld < view.widthWorld) {
       const shape2 = new sprites.ShapeX()
       shape2.copyFrom(this.shapeModel)
-      shape2.transform(view.tModelToWorld)
+      shape2.transform(this.tModelToWorld)
       const t = new sprites.Transform()
       t.setTranslation(-view.world.width, 0)
       shape2.transform(t)

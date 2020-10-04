@@ -79,7 +79,7 @@ export class Sprite {
     // Update any child sprites also
     for (const sprite of this.children) {
       sprite.step(timeStep)
-    }   
+    }
   }
   
   // Set the zoom scale and update the drawing polygon.
