@@ -17,7 +17,6 @@ import * as sprites from './sprites'
 class Graphics {
   constructor(context) {
     this.context = context
-    console.log(this, context)
   }
   setBackground(name) {
     // const color = Color[name]
@@ -72,22 +71,16 @@ class App {
     console.log(context)
 
     this.context = context
-    // this.graphics = new Graphics(this.canvas)
     this.graphics = new Graphics(context)
     
     // Initialize world and all the sprites it contains
-    // this.world.init(this.getSize().width, this.getSize().height)
     this.world.init(context.canvas.width, context.canvas.height)
 
-    console.log(this.graphics)
     this.graphics.setBackground(Color.white)
     this.graphics.setForeground(Color.black)
 
     // this.addKeyListener(this)
     
-    // this.thisThread = new Thread(this)
-    // this.thisThread.start()
-
     this.step()
   }
   
@@ -204,7 +197,7 @@ class World {
     this.height = widthWindow / 2.0
     
     // Initialize view
-    this.viewMain.init(this, this.appletWidth, this.appletHeight, widthWindow)
+    this.viewMain.init(this, appletWidth, appletHeight, widthWindow)
 
     // Set the zoom scale
     this.viewMain.setScale(1.0)

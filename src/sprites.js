@@ -93,6 +93,7 @@ export class Sprite {
   // Set the rotation amount for the ship in radians and update the 
   // drawing polygon.
   setRotation(rotation) {
+    console.log('setrotation', rotation)
     this.rotation = rotation
     this.tModelToWorld.setRotation(rotation)
   }
@@ -390,10 +391,12 @@ export class Transform {
   
   // Set the rotation for this transform
   setRotation(r) {
+    // console.log('setrotation', r)
     this.a = Math.cos(r)
     this.b = -Math.sin(r)
     this.d = Math.sin(r)
     this.e = Math.cos(r)
+    // console.log(this)
   }
 
   // Multiply this transform by another.
