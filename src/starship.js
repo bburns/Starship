@@ -13,25 +13,15 @@
 import * as sprites from './sprites'
 
 
-
-
-
-
 class App {
   
   constructor() {
-    this.timeStep = 0.1 // [seconds]
-  
-    // sleep delay during each timestep - 
-    // keeps things from going too fast and flickering (well)
-    this.delay = 100 // [milliseconds] 
-    
-    this.world = new World()
-    
+    this.timeStep = 0.1 // integration and step timestep [seconds]
     this.rdelta = 0.0
     this.rdeltaamount = 0.2
     this.throttle = 0
-    this.throttleamount = 10
+    this.throttleamount = 10  
+    this.world = new World()
   }
   
   // Initialize the applet
@@ -47,8 +37,8 @@ class App {
     this.graphics.setForeground(Color.black)
 
     // this.addKeyListener(this)
-    
-    this.step()
+
+    setInterval(this.step.bind(this), this.timeStep*1000)
   }
   
   // keyPressed(e) {
@@ -89,35 +79,18 @@ class App {
   // }
 
   step() {
-    while (true) {
-      
-      // Adjust ship rotation and throttle 
-      this.world.ship.rotate(this.rdelta)
-      this.world.ship.setThrottle(this.throttle)
-      
-      // Advance sprites
-      this.world.step(this.timeStep)
-      
-      // Pause for a bit, to keep things from going too fast. 
-      try {
-        this.thisThread.sleep(this.delay)
-      }
-      catch(ex) {}
-      
-      // Repaint display
-      // this.repaint()
-      // this.graphics.repaint()
-      this.world.draw(this.graphics)
+    // Adjust ship rotation and throttle 
+    this.world.ship.rotate(this.rdelta)
+    this.world.ship.setThrottle(this.throttle)
+    
+    // Advance sprites
+    this.world.step(this.timeStep)
+    
+    this.graphics.clear()
 
-      break
-    }
+    // Draw the world and everything in it
+    this.world.draw(this.graphics)
   }
-
-  // // Draw the world and everything in it
-  // //. gets called by java with the 'canvas' graphics
-  // paint(graphics) {
-  //   this.world.draw(graphics)
-  // }
 }
 
 
@@ -133,6 +106,7 @@ class App {
 class World {
 
   constructor() {
+    
     // Attributes: 
     this.width = 0 // Width and height of world, in world units (meters)
     this.height = 0
@@ -156,15 +130,14 @@ class World {
   }
 
   // Initialize the world
-  // width and height in pixels
-  init(appletWidth, appletHeight) {
+  init(widthPixels, heightPixels) {
     
     const widthWindow = 500.0 // the view window looks on this many meters of the world horizontally
     this.width = widthWindow * 2 // let's make the world two view width's wide
     this.height = widthWindow / 2.0
     
     // Initialize view
-    this.viewMain.init(this, appletWidth, appletHeight, widthWindow)
+    this.viewMain.init(this, widthPixels, heightPixels, widthWindow)
 
     // Set the zoom scale
     this.viewMain.setScale(1.0)
@@ -781,6 +754,9 @@ class Graphics {
     this.context.strokeStyle = color
   }
   setColor(name) {
+  }
+  clear() {
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
   }
   drawOval() {
   }
