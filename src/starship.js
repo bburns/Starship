@@ -758,7 +758,8 @@ class Graphics {
     const color = Color[name]
     this.context.strokeStyle = color
   }
-  setColor(name) {
+  setColor(color) {
+    this.context.strokeStyle = color
   }
   clear() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
