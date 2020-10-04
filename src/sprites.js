@@ -108,11 +108,13 @@ export class Sprite {
   // returns boolean
   checkCollision(other, pointIntersect, graphics) {
     // return shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)
-    if (this.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+    // if (this.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+    if (this.shapeDraw.intersectsShape(other.shapeDraw, graphics)) {
       return true
     }
     for (const child of this.children) {
-      if (child.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+      // if (child.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
+      if (child.shapeDraw.intersectsShape(other.shapeDraw, graphics)) {
         return true
       }
     }    
@@ -264,10 +266,12 @@ export class ShapeX {
     this.y2 = (transform.d * x + transform.e * y + transform.f)
   }    
   
-  // See if this shape intersects anywhere with the given shape
+  // See if this shape intersects anywhere with the given shape -
+  // returns Point2D with intersection or null.
   // If they do, returns true and fills pointIntersect with the point where they touch.
   // intersectsShape(ShapeX shape2, Point2D pointIntersect, Graphics g) {
-  intersectsShape(shape2, pointIntersect, graphics) {
+  // intersectsShape(shape2, pointIntersect, graphics) {
+  intersectsShape(shape2, graphics) {
     
     // Line segment objects
     const seg1 = new Segment()
@@ -278,49 +282,58 @@ export class ShapeX {
     // (x - bounds, y - bounds) to (x + bounds, y + bounds).
     for (let i = 0; i < shape2.nLines - 1; i++) {
       // Get line segment
-      if (shape2.getLineSegment(seg2, i)) {
+      // if (shape2.getLineSegment(seg2, i)) {
+      const seg2 = shape2.getLineSegment(i)
+      if (seg2) {
         // debug:
         // seg2.drawSegment(g, Color.orange)
         for (let j = 0; j < this.nLines - 1; j++) {
-          if (this.getLineSegment(seg1, j)) {
+          // if (this.getLineSegment(seg1, j)) {
+          const seg1 = this.getLineSegment(j)
+          if (seg1) {
             // debug:
             // seg1.drawSegment(g, Color.blue)
             // pause here for key strike - if "a" then break here
             // if (w.getKeyPress() == KeyEvent.VK_A) {
               // int p = 0 // put breakpoint here
             // }
-            if (seg1.getIntersection(seg2, pointIntersect)) {
-              // debug:
-              // g.setColor(Color.blue)
-              // seg1.drawSegment(g)  
-              // g.setColor(Color.green)
-              // seg2.drawSegment(g)  
-              return true
-            }
+            // if (seg1.getIntersection(seg2, pointIntersect)) {
+            //   // debug:
+            //   // g.setColor(Color.blue)
+            //   // seg1.drawSegment(g)  
+            //   // g.setColor(Color.green)
+            //   // seg2.drawSegment(g)  
+            //   return true
+            // }
+            const pointIntersect = seg1.getIntersection(seg2)
+            return pointIntersect
           }
         }      
       }
     }
-    return false
+    // return false
+    return null
   }
 
-  // Fill the specified Segment object with the endpoints of the 
+  // Get the specified Segment object with the endpoints of the 
   // specified line segment, as stored in this shape's arrays.
   // If the specified line segment is not a segment (ie it's a 
-  // terminator), then return false.
+  // terminator), then return null.
   // public boolean getLineSegment(Segment seg, int iLine) {
-  getLineSegment(segment, iLine) {
+  // getLineSegment(segment, iLine) {
+  getLineSegment(iLine) {
     const nPoint = this.nLine[iLine]
     const nPoint2 = this.nLine[iLine+1]
     // First make sure we have a segment
     if ((nPoint !== -1) && (nPoint2 !== -1)) {
+      const segment = new Segment()
       segment.x1 = this.xPoints[nPoint]
       segment.y1 = this.yPoints[nPoint]
       segment.x2 = this.xPoints[nPoint2]
       segment.y2 = this.yPoints[nPoint2]
-      return true
-    }  
-    return false
+      return segment
+    }
+    return null
   }
   
   // Draw this shape on the given graphics output
@@ -427,8 +440,10 @@ export class Segment {
   // See if this line segment intersects the given line segment.
   // Returns true if segments intersect, and fills in point p with the intersect point.
   // getIntersection(Segment s, Point2D p) {
-  getIntersection(segment, point2d) {
-    
+  // Returns a Point2D object of the intersect point if segments intersect, 
+  // or null if they don't.
+  // getIntersection(segment, point2d) {
+  getIntersection(segment) {
     // Get equations describing lines (ax + bx = c),
     // then solve for a point - if no solution, no intersection.
     this.getLineParameters()
@@ -437,19 +452,17 @@ export class Segment {
     // If denominator is zero, no solution, so no intersection (ie lines are parallel)
     // You can see that the slopes are the same because if a/b == a'/b' then denom=0
     if (denom === 0)
-      return false
+      return null
     // Now check if intersecting point is actually within both line segments
     const x = (this.b * segment.c - segment.b * this.c) / denom
     const y = (this.c * segment.a - segment.c * this.a) / denom
     //.. don't know relative positions of p1 and p2, so must account for that also!
-//    if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line segment
-//    if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment s either
-    if (this.pointInBounds(x, y) === false) return false
-    if (segment.pointInBounds(x, y) === false) return false
-    // Must be on both line segments so set point and return true!
-    point2d.x = x
-    point2d.y = y
-    return true
+    // if ((x < x1) || (x > x2) || (y < y1) || (y > y2)) return false // not on this line segment
+    // if ((x < s.x1) || (x > s.x2) || (y < s.y1) || (y > s.y2)) return false // not on line segment s either
+    if (this.pointInBounds(x, y) === false) return null
+    if (segment.pointInBounds(x, y) === false) return null
+    // Must be on both line segments so return intersection
+    return new Point2D(x, y)
   }
 
   // Check if the given point is within the bounds of the box 
