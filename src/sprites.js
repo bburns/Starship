@@ -105,20 +105,19 @@ export class Sprite {
   }
   
   // Check for a collision between this sprite and the specified sprite. 
-  // returns boolean
-  checkCollision(other, pointIntersect, graphics) {
+  // Returns a Point2D with intersection or null.
+  // checkCollision(other, pointIntersect, graphics) {
+  checkCollision(other, graphics) {
     // return shapeDraw.intersectsShape(s.shapeDraw, pointIntersect, g)
     // if (this.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
-    if (this.shapeDraw.intersectsShape(other.shapeDraw, graphics)) {
-      return true
-    }
+    const intersectPoint = this.shapeDraw.intersectsShape(other.shapeDraw, graphics)
+    if (intersectPoint) return intersectPoint
     for (const child of this.children) {
       // if (child.shapeDraw.intersectsShape(other.shapeDraw, pointIntersect, graphics)) {
-      if (child.shapeDraw.intersectsShape(other.shapeDraw, graphics)) {
-        return true
-      }
+      const intersectPoint = child.shapeDraw.intersectsShape(other.shapeDraw, graphics)
+      if (intersectPoint) return intersectPoint
     }    
-    return false
+    return null
   }
 
   // Make the sprite explode!
@@ -273,26 +272,18 @@ export class ShapeX {
   // intersectsShape(shape2, pointIntersect, graphics) {
   intersectsShape(shape2, graphics) {
     
-    // Line segment objects
-    const seg1 = new Segment()
-    const seg2 = new Segment()
-
     // Walk through s's line segments and see if they intersect with our line segments.
     // Check if the point is within the bounding box of this sprite - 
     // (x - bounds, y - bounds) to (x + bounds, y + bounds).
     for (let i = 0; i < shape2.nLines - 1; i++) {
       // Get line segment
-      // if (shape2.getLineSegment(seg2, i)) {
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        // debug:
-        // seg2.drawSegment(g, Color.orange)
+        // seg2.drawSegment(graphics, 'orange') //. debug
         for (let j = 0; j < this.nLines - 1; j++) {
-          // if (this.getLineSegment(seg1, j)) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            // debug:
-            // seg1.drawSegment(g, Color.blue)
+            // seg1.drawSegment(graphics, 'blue') //. debug
             // pause here for key strike - if "a" then break here
             // if (w.getKeyPress() == KeyEvent.VK_A) {
               // int p = 0 // put breakpoint here
@@ -319,8 +310,6 @@ export class ShapeX {
   // specified line segment, as stored in this shape's arrays.
   // If the specified line segment is not a segment (ie it's a 
   // terminator), then return null.
-  // public boolean getLineSegment(Segment seg, int iLine) {
-  // getLineSegment(segment, iLine) {
   getLineSegment(iLine) {
     const nPoint = this.nLine[iLine]
     const nPoint2 = this.nLine[iLine+1]
@@ -338,7 +327,6 @@ export class ShapeX {
   
   // Draw this shape on the given graphics output
   //. optimize this to use moveTo, lineTo methods
-  // drawShape(Graphics g) {
   drawShape(graphics) {
     let xOld = 0
     let yOld = 0
@@ -438,11 +426,8 @@ export class Segment {
   }
   
   // See if this line segment intersects the given line segment.
-  // Returns true if segments intersect, and fills in point p with the intersect point.
-  // getIntersection(Segment s, Point2D p) {
   // Returns a Point2D object of the intersect point if segments intersect, 
   // or null if they don't.
-  // getIntersection(segment, point2d) {
   getIntersection(segment) {
     // Get equations describing lines (ax + bx = c),
     // then solve for a point - if no solution, no intersection.
@@ -462,7 +447,8 @@ export class Segment {
     if (this.pointInBounds(x, y) === false) return null
     if (segment.pointInBounds(x, y) === false) return null
     // Must be on both line segments so return intersection
-    return new Point2D(x, y)
+    const intersectPoint = Point2D(x, y)
+    return intersectPoint
   }
 
   // Check if the given point is within the bounds of the box 
@@ -499,17 +485,9 @@ export class Segment {
     }
   }
 
-  // // Draw this linesegment
-  // // drawSegment(Graphics g) {
-  // drawSegment(graphics) {
-  //   graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
-  // }
-  
-  // Draw this linesegment with the given color
-  //! use optional color param??
-  // drawSegment(Graphics g, Color c) {
+  // Draw this linesegment with the given optional color
   drawSegment(graphics, color) {
-    graphics.setColor(color)
+    if (color) graphics.setColor(color)
     graphics.drawLine(this.x1, this.y1, this.x2, this.y2)
   }
 }

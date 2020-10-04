@@ -184,10 +184,12 @@ class World {
 
     // Check for collisions
     // Must do after drawing.
-    const pointIntersect = new sprites.Point2D() // intersection point used in collision testing
+    // const pointIntersect = new sprites.Point2D() // intersection point used in collision testing
     
     // Check for ship-base collision = bad or good depending on speed
-    if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
+    // if (this.ship.checkCollision(this.base, pointIntersect, graphics)) {
+    const pointIntersect = this.ship.checkCollision(this.base, graphics)
+    if (pointIntersect) {
       
       // Draw a spark at the point of intersection (a small green circle)
       let w = 5
@@ -210,20 +212,23 @@ class World {
     }
     
     // Check for collisions between the ship and land.
-    else if (this.ship.checkCollision(this.land, pointIntersect, graphics)) {
-      
-      // Draw a spark at the point of intersection (a small red circle)
-      let w = 5
-      graphics.setColor(Color.red)
-      graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+    // else if (this.ship.checkCollision(this.land, pointIntersect, graphics)) {
+    else {
+      const pointIntersect = this.ship.checkCollision(this.land, graphics)
+      if (pointIntersect) {
+        // Draw a spark at the point of intersection (a small red circle)
+        let w = 5
+        graphics.setColor(Color.red)
+        graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
 
-      // Impart momentum to the ship
-      //. a certain amount of energy will go into deforming soil and ship
-      // ship.angularVelocity += 0.2f
-      this.ship.vy = -15.0 // bounce up!
-      
-      //. Ship should explode if above a certain velocity
-      // this.ship.explode()
+        // Impart momentum to the ship
+        //. a certain amount of energy will go into deforming soil and ship
+        // ship.angularVelocity += 0.2f
+        this.ship.vy = -15.0 // bounce up!
+        
+        //. Ship should explode if above a certain velocity
+        // this.ship.explode()
+      }
     }
   }
 }
