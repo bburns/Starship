@@ -17,3 +17,6 @@ canvas {
   width: 800px;
   height: 400px;
 }
+canvas:focus {
+  outline: none;
+}

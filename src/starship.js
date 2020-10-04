@@ -36,10 +36,7 @@ class App {
     this.graphics.setBackground(Color.white)
     this.graphics.setForeground(Color.black)
 
-    // this.addKeyListener(this)
-
     setInterval(this.step.bind(this), this.timeStep*1000)
-    // this.step()
   }
   
   onKeyDown(event) {
@@ -75,9 +72,6 @@ class App {
     }    
   }
   
-  // keyTyped(e) {
-  // }
-
   step() {
     this.world.ship.rotate(this.rdelta)
     this.world.ship.setThrottle(this.throttle)
@@ -119,8 +113,6 @@ class World {
     this.base = new Base()
     // this.stars = new Stars()
     // this.clouds = new Clouds()
-
-    // this.pointIntersect = new Point2D() // intersection point used in collision testing
   }
 
   // Initialize the world
@@ -168,6 +160,7 @@ class World {
     graphics.clear()
 
     // Draw sprites
+    graphics.setColor('#000')
     this.moon.draw(graphics, this.viewMain)
     this.land.draw(graphics, this.viewMain)
     this.base.draw(graphics, this.viewMain)
@@ -188,7 +181,6 @@ class World {
     // Check for ship-base collision = bad or good depending on speed
     let pointIntersect = this.ship.checkCollision(this.base, graphics)
     if (pointIntersect) {
-      console.log("COLLISION BASE")
       // Draw a spark at the point of intersection (a small green circle)
       let r = 10
       graphics.setColor(Color.green)
@@ -215,7 +207,6 @@ class World {
     // Check for collisions between the ship and land.
     pointIntersect = this.ship.checkCollision(this.land, graphics)
     if (pointIntersect) {
-      console.log("COLLISION LAND")
 
       // Draw a spark at the point of intersection (a small red circle)
       let r = 5
@@ -567,7 +558,7 @@ class Flame extends sprites.Sprite {
     // super.draw(graphics, view)    
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.ship.tModelToWorld)
-    this.shapeDraw.transform(this.view.tWorldToView)
+    this.shapeDraw.transform(view.tWorldToView)
     this.shapeDraw.drawShape(graphics)
     
     //, set color back

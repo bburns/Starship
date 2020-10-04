@@ -280,7 +280,6 @@ export class ShapeX {
             // seg1.drawBoundingBox(graphics, 'red') //. debug
             const pointIntersect = seg1.getIntersection(seg2)
             if (pointIntersect) {
-              console.log('intersect', seg1, seg2, pointIntersect)
               return pointIntersect
             }
           }
