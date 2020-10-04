@@ -153,6 +153,7 @@ export class Sprite {
     shapeDraw.copyFrom(this.shapeModel)
     shapeDraw.transform(this.tModelToWorld)
     shapeDraw.transform(view.tWorldToView)
+    console.log(this.shapeModel)
     shapeDraw.drawShape(graphics)
     
     // Now draw any child sprites
@@ -168,14 +169,13 @@ export class Sprite {
 // ShapeX
 //-----------------------------------------------------------------------------
 
-// why the X ?
+// why the X ? was a java name conflict
 
 // Defines a shape, which is a series of line segments between points.
 // First define the points needed, with calls to addPoint(x,y).
 // Then define the line segments between the points, with calls to 
 // addLineTo(point). 
 // To start a new line segment, call addLineTo(-1). 
-//! move all this into a package, to avoid name conflict?
 //, might be able to implement Shape interface eventually?
 //, store bounding rectangle as two points - translate them along with other points
 export class ShapeX {
@@ -204,6 +204,7 @@ export class ShapeX {
 
   // Add a point to the shape
   addPoint(x, y) {
+    // console.log('addpoint', x, y)
     this.xPoints[this.nPoints] = x
     this.yPoints[this.nPoints] = y
     this.nPoints++
@@ -224,12 +225,18 @@ export class ShapeX {
   // Copy another shape into this one
   // copyFrom(ShapeX p) {
   copyFrom(other) {
-    for (let i = 0; i < other.nPoints; i++) {
-      this.addPoint(other.xPoints[i], other.yPoints[i])
-    }
-    for (let i = 0; i < other.nLines; i++) {
-      this.addLineTo(other.nLine[i])
-    }
+    // console.log('copyfrom', other, 'to', this)
+    // for (let i = 0; i < other.nPoints; i++) {
+    //   this.addPoint(other.xPoints[i], other.yPoints[i])
+    // }
+    // for (let i = 0; i < other.nLines; i++) {
+    //   this.addLineTo(other.nLine[i])
+    // }
+    this.nPoints = other.nPoints
+    this.nLines = other.nLines
+    this.xPoints = [...other.xPoints]
+    this.yPoints = [...other.yPoints]
+    this.nLine = [...other.nLine]
     this.x1 = other.x1
     this.x2 = other.x2
     this.y1 = other.y1
@@ -241,6 +248,7 @@ export class ShapeX {
   // Just need to transform the points and the bounding box.
   // transform(Transform t) {
   transform(transform) {
+    console.log(transform)
     for (let i = 0; i < this.nPoints; i++) {
       const x = this.xPoints[i]
       const y = this.yPoints[i]
@@ -318,6 +326,7 @@ export class ShapeX {
   }
   
   // Draw this shape on the given graphics output
+  //. optimize this to use moveTo, lineTo methods
   // drawShape(Graphics g) {
   drawShape(graphics) {
     let xOld = 0
@@ -360,11 +369,11 @@ export class Transform {
   
   constructor(a, b, c, d, e, f) {
     this.a = 1.0 // default
-    this.b = null
-    this.c = null
-    this.d = null
+    this.b = 0
+    this.c = 0
+    this.d = 0
     this.e = 1.0 // default
-    this.f = null
+    this.f = 0
   }
 
   // Set the translation (x and y shift) for this transform

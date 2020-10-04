@@ -31,6 +31,7 @@ class Graphics {
   drawOval() {
   }
   drawLine(x0, y0, x1, y1) {
+    console.log('drawline', x0,y0,x1,y1)
     this.context.beginPath()
     this.context.moveTo(x0, y0)
     this.context.lineTo(x1, y1)
