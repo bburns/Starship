@@ -99,7 +99,7 @@ class World {
     this.width = 0 // Width and height of world, in world units (meters)
     this.height = 0
     this.radiansPerDegree = 2.0 * Math.pi / 360.0 // conversion factor
-    this.g = 4.0 // gravity (m/s/s), ~half earth
+    this.g = 5.0 // gravity (m/s/s)
 
     // views should probably belong to the applet, since that's the main window
     // will want a view for the stats also, which could be its own class?
@@ -782,6 +782,8 @@ const Color = {
   green: '#0f0',
   orange: '#f80',
   lightGray: '#eee',
+  red: '#f00',
+  yellow: 'yellow',
 }
 
 
