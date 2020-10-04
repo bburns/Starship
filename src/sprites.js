@@ -284,7 +284,7 @@ export class ShapeX {
               // int p = 0 // put breakpoint here
             // }
             const pointIntersect = seg1.getIntersection(seg2)
-            console.log('intersect', seg1, seg2, pointIntersect)
+            if (pointIntersect) console.log('intersect', seg1, seg2, pointIntersect)
             return pointIntersect
           }
           // continue
@@ -426,7 +426,8 @@ export class Segment {
     // You can see that the slopes are the same because if a/b == a'/b' then denom=0
     if (denom === 0)
       return null
-    // Now check if intersecting point is actually within both line segments
+    // Lines intersect, but need to check if intersecting point is actually within 
+    // both line segments bounding boxes.
     const x = (this.b * other.c - other.b * this.c) / denom
     const y = (this.c * other.a - other.c * this.a) / denom
     console.log(x, this.x1, this.x2)

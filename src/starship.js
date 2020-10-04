@@ -193,13 +193,15 @@ class World {
       // Draw a spark at the point of intersection (a small green circle)
       let w = 5
       graphics.setColor(Color.green)
-      graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+      // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+      graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
       
       // Ship should explode if above a certain velocity
       if ((this.ship.vy*this.ship.vy + this.ship.vx*this.ship.vx) > 25) {
         w = 40
         graphics.setColor(Color.orange)
-        graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+        // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+        graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
         console.log("explode ship")
         this.ship.explode()
       }
@@ -207,19 +209,19 @@ class World {
       //. always stop the ship?
       this.ship.vx = 0 
       this.ship.vy = 0 
-      
     }
     
     // Check for collisions between the ship and land.
     else {
-      console.log(this.land)
+      console.log("collide land?", this.land)
       const pointIntersect = this.ship.checkCollision(this.land, graphics)
       // console.log(pointIntersect)
       if (pointIntersect) {
         // Draw a spark at the point of intersection (a small red circle)
         let w = 5
         graphics.setColor(Color.red)
-        graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+        // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
+        graphics.drawCircle(pointIntersect.x - w, pointIntersect.y - w, w*0.5)
 
         // Impart momentum to the ship
         //. a certain amount of energy will go into deforming soil and ship
@@ -405,24 +407,25 @@ class Ship extends sprites.Sprite {
     
     // Define ship's vertices, in world units (meters)
     this.shapeModel.addPoint(  0, -25) // 0
-    this.shapeModel.addPoint(-10,  10) // 1
-    this.shapeModel.addPoint( -7,   1) // 2
-    this.shapeModel.addPoint(-21,  15) // 3
-    this.shapeModel.addPoint( 10,  10) // 4
-    this.shapeModel.addPoint( 21,  15) // 5
-    this.shapeModel.addPoint(  7,   1) // 6
+    // this.shapeModel.addPoint(-10,  10) // 1
+    // this.shapeModel.addPoint( -7,   1) // 2
+    // this.shapeModel.addPoint(-21,  15) // 3
+    // this.shapeModel.addPoint( 10,  10) // 4
+    // this.shapeModel.addPoint( 21,  15) // 5
+    // this.shapeModel.addPoint(  7,   1) // 6
+    this.shapeModel.addPoint( 0, 25) // 1
     
     // Define ship's shape with line segments
     this.shapeModel.addLineTo(0)
     this.shapeModel.addLineTo(1)
-    this.shapeModel.addLineTo(2)
-    this.shapeModel.addLineTo(3)
-    this.shapeModel.addLineTo(1)
-    this.shapeModel.addLineTo(4)
-    this.shapeModel.addLineTo(5)
-    this.shapeModel.addLineTo(6)
-    this.shapeModel.addLineTo(4)
-    this.shapeModel.addLineTo(0)
+    // this.shapeModel.addLineTo(2)
+    // this.shapeModel.addLineTo(3)
+    // this.shapeModel.addLineTo(1)
+    // this.shapeModel.addLineTo(4)
+    // this.shapeModel.addLineTo(5)
+    // this.shapeModel.addLineTo(6)
+    // this.shapeModel.addLineTo(4)
+    // this.shapeModel.addLineTo(0)
     
     this.setScale(1.0)
     this.setRotation(this.rotation)
@@ -595,21 +598,28 @@ class Land extends sprites.Sprite {
     this.height = world.height
     const hillHeight = this.height / 5 //. 20% of world height
     
-    // Create random horizon line
-    const nPoints = 40
-    for (let i = 0; i < nPoints; i++) {
-      const x = this.width * i / (nPoints - 1)
-      const y = this.height - (Math.random() * hillHeight)
-      this.shapeModel.addPoint(x, y)
-      this.shapeModel.addLineTo(i)
-    }
+    // // Create random horizon line
+    // const nPoints = 40
+    // for (let i = 0; i < nPoints; i++) {
+    //   const x = this.width * i / (nPoints - 1)
+    //   const y = this.height - (Math.random() * hillHeight)
+    //   this.shapeModel.addPoint(x, y)
+    //   this.shapeModel.addLineTo(i)
+    // }
 
-    // Make space for a base
-    this.shapeModel.yPoints[29] = this.shapeModel.yPoints[30] = this.shapeModel.yPoints[31]
+    // // Make space for a base
+    // this.shapeModel.yPoints[29] = this.shapeModel.yPoints[30] = this.shapeModel.yPoints[31]
     
-    // Make the last point the same as the first point so it will wrap around properly
-    this.shapeModel.yPoints[nPoints-1] = this.shapeModel.yPoints[0]
+    // // Make the last point the same as the first point so it will wrap around properly
+    // this.shapeModel.yPoints[nPoints-1] = this.shapeModel.yPoints[0]
+
     
+    //. plain horizontal line
+    this.shapeModel.addPoint(0, this.height - hillHeight)
+    this.shapeModel.addPoint(this.width, this.height - hillHeight)
+    this.shapeModel.addLineTo(0)
+    this.shapeModel.addLineTo(1)
+
     // Set scale
     this.setScale(1.0)
   }
@@ -662,10 +672,11 @@ class Base extends sprites.Sprite {
     this.height = world.height
     this.hillHeight = this.height / 5 //. 20% of world height
 
-    this.x = world.land.shapeModel.xPoints[29]
+    const iLast = world.land.shapeModel.xPoints.length - 1
+    this.x = world.land.shapeModel.xPoints[iLast]
     this.xw = this.width / 20
     
-    this.y = world.land.shapeModel.yPoints[29]
+    this.y = world.land.shapeModel.yPoints[iLast]
     this.yw = this.height / 40
     
     this.shapeModel.addPoint(this.x, this.y)
@@ -716,7 +727,6 @@ class Moon extends sprites.Sprite {
     // use superclass to get shapeDraw
     // super.draw(graphics, view)
     graphics.setColor(Color.lightGray)
-    // graphics.drawOval(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.diam, this.diam)
     graphics.drawCircle(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.radius)
     graphics.setColor(Color.black)
   }
@@ -795,4 +805,3 @@ const Color = {
 
 const app = new App()
 export default app
-
