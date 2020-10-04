@@ -38,8 +38,8 @@ class App {
 
     // this.addKeyListener(this)
 
-    // setInterval(this.step.bind(this), this.timeStep*1000)
-    this.step()
+    setInterval(this.step.bind(this), this.timeStep*1000)
+    // this.step()
   }
   
   // keyPressed(e) {
@@ -146,8 +146,8 @@ class World {
     // this.clouds.init(this)
     
     // Put ship in middle of world
-    // this.ship.setPos(this.width / 2.0, this.height / 2.0)
-    this.ship.setPos(this.width / 2.0, this.height * 5/6)
+    this.ship.setPos(this.width / 2.0, this.height / 2.0)
+    // this.ship.setPos(this.width / 2.0, this.height * 5/6)
 
     //, Tell view to track the ship sprite
     // this.view.trackSprite(this.ship)
@@ -215,13 +215,12 @@ class World {
     else {
       console.log("collide land?")
       const pointIntersect = this.ship.checkCollision(this.land, graphics)
-      // console.log(pointIntersect)
+      console.log(pointIntersect)
       if (pointIntersect) {
         console.log("COLLISIONLAND")
         // Draw a spark at the point of intersection (a small red circle)
         let r = 5
         graphics.setColor(Color.red)
-        // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
         graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
 
         // Impart momentum to the ship
@@ -408,25 +407,25 @@ class Ship extends sprites.Sprite {
     
     // Define ship's vertices, in world units (meters)
     this.shapeModel.addPoint(  0, -25) // 0
-    // this.shapeModel.addPoint(-10,  10) // 1
-    // this.shapeModel.addPoint( -7,   1) // 2
-    // this.shapeModel.addPoint(-21,  15) // 3
-    // this.shapeModel.addPoint( 10,  10) // 4
-    // this.shapeModel.addPoint( 21,  15) // 5
-    // this.shapeModel.addPoint(  7,   1) // 6
-    this.shapeModel.addPoint( 0, 25) // 1
+    this.shapeModel.addPoint(-10,  10) // 1
+    this.shapeModel.addPoint( -7,   1) // 2
+    this.shapeModel.addPoint(-21,  15) // 3
+    this.shapeModel.addPoint( 10,  10) // 4
+    this.shapeModel.addPoint( 21,  15) // 5
+    this.shapeModel.addPoint(  7,   1) // 6
+    // this.shapeModel.addPoint( 0, 25) // 1
     
     // Define ship's shape with line segments
     this.shapeModel.addLineTo(0)
     this.shapeModel.addLineTo(1)
-    // this.shapeModel.addLineTo(2)
-    // this.shapeModel.addLineTo(3)
-    // this.shapeModel.addLineTo(1)
-    // this.shapeModel.addLineTo(4)
-    // this.shapeModel.addLineTo(5)
-    // this.shapeModel.addLineTo(6)
-    // this.shapeModel.addLineTo(4)
-    // this.shapeModel.addLineTo(0)
+    this.shapeModel.addLineTo(2)
+    this.shapeModel.addLineTo(3)
+    this.shapeModel.addLineTo(1)
+    this.shapeModel.addLineTo(4)
+    this.shapeModel.addLineTo(5)
+    this.shapeModel.addLineTo(6)
+    this.shapeModel.addLineTo(4)
+    this.shapeModel.addLineTo(0)
     
     this.setScale(1.0)
     this.setRotation(this.rotation)
@@ -452,8 +451,8 @@ class Ship extends sprites.Sprite {
     
     // Move ship according to gravity, thrust, etc.
     this.ax = thrustAccel * Math.sin(this.rotation)
-    // this.ay = - thrustAccel * Math.cos(this.rotation) + this.world.g
-    this.ay = - thrustAccel * Math.cos(this.rotation)
+    this.ay = - thrustAccel * Math.cos(this.rotation) + this.world.g
+    // this.ay = - thrustAccel * Math.cos(this.rotation)
 
     // Update fuel remaining
     this.massFuel -= fuelBurned
