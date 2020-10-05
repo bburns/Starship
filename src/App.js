@@ -10,6 +10,7 @@ function App() {
     starship.run(context)
     canvas.onkeydown = event => starship.onKeyDown(event)
     canvas.onkeyup = event => starship.onKeyUp(event)
+    canvas.focus()
   }, [])
   return (
     <div className="App">
