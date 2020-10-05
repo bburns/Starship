@@ -5,9 +5,9 @@
 //
 // Author: Brian Burns
 // History:
-//   version 0.1  2001-05  no base, bounces on surface
-//   version 0.2  2012-05  adding base, realistic collisions
-//   version 0.3  2020-10  converting from java to javascript
+//   version 0.1  2001-05  bounces on surface
+//   version 0.2  2012-05  added base
+//   version 0.3  2020-10  convert from java to javascript
 //-----------------------------------------------------------------------------
 
 import * as sprites from './sprites'
@@ -22,6 +22,8 @@ class App {
     this.throttle = 0
     this.throttleamount = 10  
     this.world = new World()
+    this.background = '#333'
+    this.foreground = '#eee'
   }
   
   // Initialize the applet
@@ -33,8 +35,8 @@ class App {
     // Initialize world and all the sprites it contains
     this.world.init(context.canvas.width, context.canvas.height)
 
-    this.graphics.setBackground(Color.white)
-    this.graphics.setForeground(Color.black)
+    // this.graphics.setBackground(Color.white)
+    // this.graphics.setForeground(Color.black)
 
     setInterval(this.step.bind(this), this.timeStep*1000)
   }
@@ -183,14 +185,14 @@ class World {
     if (pointIntersect) {
       // Draw a spark at the point of intersection (a small green circle)
       let r = 10
-      graphics.setColor(Color.green)
+      graphics.setColor('green')
       // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
       graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
       
       // Ship should explode if above a certain velocity
       if ((this.ship.vy*this.ship.vy + this.ship.vx*this.ship.vx) > 25) {
         r = 20
-        graphics.setColor(Color.orange)
+        graphics.setColor('orange')
         // graphics.drawOval(pointIntersect.x - w, pointIntersect.y - w, w, w)
         graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
         console.log("explode ship")
@@ -210,7 +212,7 @@ class World {
 
       // Draw a spark at the point of intersection (a small red circle)
       let r = 5
-      graphics.setColor(Color.red)
+      graphics.setColor('red')
       graphics.drawCircle(pointIntersect.x, pointIntersect.y, r)
 
       // Impart momentum to the ship
@@ -489,9 +491,9 @@ class Ship extends sprites.Sprite {
     // graphics.drawString(s, 4, 66)
     s = "Fuel (kg): (" + this.massFuel + ")"
     if (this.massFuel < 500)
-      graphics.setColor(Color.red)
+      graphics.setColor('red')
     graphics.drawString(s, 4, 33)
-    graphics.setColor(Color.black)
+    // graphics.setColor('black')
     // s = "view pos: (" + polyDraw.xpoints[0] + ", " + polyDraw.ypoints[0] + ")"
     // graphics.drawString(s, 4, 80)
   }
@@ -550,9 +552,9 @@ class Flame extends sprites.Sprite {
     
     // Set color for flames
     if (Math.random() > 0.5)
-      graphics.setColor(Color.yellow) //. do white or yelloworange. red is too red. redorange? 
+      graphics.setColor('yellow') //. do white or yelloworange. red is too red. redorange? 
     else
-      graphics.setColor(Color.orange)
+      graphics.setColor('orange')
 
     // Draw shape using base class
     // super.draw(graphics, view)    
@@ -560,9 +562,6 @@ class Flame extends sprites.Sprite {
     this.shapeDraw.transform(this.ship.tModelToWorld)
     this.shapeDraw.transform(view.tWorldToView)
     this.shapeDraw.drawShape(graphics)
-    
-    //, set color back
-    graphics.setColor(Color.black)
   }
 }
 
@@ -612,7 +611,8 @@ class Land extends sprites.Sprite {
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.tModelToWorld)
     this.shapeDraw.transform(view.tWorldToView)
-    graphics.setColor(Color.black)
+    // graphics.setColor('black')
+    // graphics.setColor(this.color)
     this.shapeDraw.drawShape(graphics)
     
     // Repeat land off to the right
@@ -678,7 +678,7 @@ class Base extends sprites.Sprite {
 
   // Draw the base
   draw(graphics, view) {
-    graphics.setColor(Color.black)
+    // graphics.setColor('black')
     this.shapeDraw.copyFrom(this.shapeModel)
     this.shapeDraw.transform(this.tModelToWorld)
     this.shapeDraw.transform(view.tWorldToView)
@@ -710,9 +710,8 @@ class Moon extends sprites.Sprite {
   draw(graphics, view) {
     // use superclass to get shapeDraw
     // super.draw(graphics, view)
-    graphics.setColor(Color.lightGray)
+    graphics.setColor('#eee')
     graphics.drawCircle(this.shapeDraw.xPoints[0], this.shapeDraw.yPoints[0], this.radius)
-    graphics.setColor(Color.black)
   }
 }
 
@@ -746,8 +745,8 @@ class Graphics {
   setBackground(name) {
     // const color = Color[name]
   }
-  setForeground(name) {
-    const color = Color[name]
+  setForeground(color) {
+    // const color = Color[name]
     this.context.strokeStyle = color
   }
   setColor(color) {
@@ -755,8 +754,6 @@ class Graphics {
   }
   clear() {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-  }
-  drawOval(x, y, dx, dy) {
   }
   drawCircle(x, y, radius) {
     this.context.beginPath()
@@ -776,15 +773,15 @@ class Graphics {
   }
 }
 
-const Color = {
-  white: '#fff',
-  black: '#000',
-  green: '#0f0',
-  orange: '#f80',
-  lightGray: '#eee',
-  red: '#f00',
-  yellow: 'yellow',
-}
+// const Color = {
+//   white: '#fff',
+//   black: '#000',
+//   green: '#0f0',
+//   orange: '#f80',
+//   lightGray: '#eee',
+//   red: '#f00',
+//   yellow: 'yellow',
+// }
 
 
 const app = new App()

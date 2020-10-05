@@ -271,13 +271,13 @@ export class ShapeX {
       // Get line segment
       const seg2 = shape2.getLineSegment(i)
       if (seg2) {
-        // seg2.drawSegment(graphics, 'orange') //. debug
-        // seg2.drawBoundingBox(graphics, 'orange') //. debug
+        // seg2.drawSegment(graphics, 'orange')
+        // seg2.drawBoundingBox(graphics, 'orange')
         for (let j = 0; j < this.nLines - 1; j++) {
           const seg1 = this.getLineSegment(j)
           if (seg1) {
-            // seg1.drawSegment(graphics, 'red') //. debug
-            // seg1.drawBoundingBox(graphics, 'red') //. debug
+            // seg1.drawSegment(graphics, 'red')
+            // seg1.drawBoundingBox(graphics, 'red')
             const pointIntersect = seg1.getIntersection(seg2)
             if (pointIntersect) {
               return pointIntersect

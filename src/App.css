@@ -16,6 +16,8 @@ canvas {
   border: 1px solid gray;
   width: 800px;
   height: 400px;
+  background: #222;
+  color: #eee;
 }
 canvas:focus {
   outline: none;
