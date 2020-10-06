@@ -12,6 +12,7 @@
 
 import * as sprites from './sprites'
 
+
 const themes = {
   dark: {
     sky: '#222',
@@ -135,7 +136,7 @@ class World {
     this.land = new Land()
     this.moon = new Moon()
     this.base = new Base()
-    this.stars = new Stars()
+    // this.stars = new Stars()
     // this.clouds = new Clouds()
   }
 
@@ -157,7 +158,7 @@ class World {
     this.land.init(this)
     this.moon.init(this)
     this.base.init(this)
-    this.stars.init(this)
+    // this.stars.init(this)
     // this.clouds.init(this)
     
     // Put ship in middle of world
@@ -188,7 +189,7 @@ class World {
     this.land.draw(graphics, this.viewMain)
     this.base.draw(graphics, this.viewMain)
     this.ship.draw(graphics, this.viewMain)
-    this.stars.draw(graphics, this.viewMain)
+    // this.stars.draw(graphics, this.viewMain)
     // this.clouds.draw(graphics, this.viewMain)
 
     // Draw stats and border
