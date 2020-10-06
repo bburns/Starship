@@ -20,8 +20,8 @@ const themes = {
     spark: 'red',
     land: '#ccc',
     base: '#bbb',
-    moon: '#777',
-    stars: '#444',
+    moon: '#999',
+    stars: 'white',
   },
   light: {
     sky: 'white',
@@ -135,7 +135,7 @@ class World {
     this.land = new Land()
     this.moon = new Moon()
     this.base = new Base()
-    // this.stars = new Stars()
+    this.stars = new Stars()
     // this.clouds = new Clouds()
   }
 
@@ -157,7 +157,7 @@ class World {
     this.land.init(this)
     this.moon.init(this)
     this.base.init(this)
-    // this.stars.init(this)
+    this.stars.init(this)
     // this.clouds.init(this)
     
     // Put ship in middle of world
@@ -188,7 +188,7 @@ class World {
     this.land.draw(graphics, this.viewMain)
     this.base.draw(graphics, this.viewMain)
     this.ship.draw(graphics, this.viewMain)
-    // this.stars.draw(graphics, this.viewMain)
+    this.stars.draw(graphics, this.viewMain)
     // this.clouds.draw(graphics, this.viewMain)
 
     // Draw stats and border
@@ -742,8 +742,31 @@ class Moon extends sprites.Sprite {
 // Stars
 //-----------------------------------------------------------------------------
 
-// class Stars extends sprites.Sprite {
-// }
+class Stars extends sprites.Sprite {
+  constructor() {
+    super()
+  }
+  
+  init(world) {
+    this.world = world
+    this.nstars = 25
+    for (let i = 0; i < this.nstars; i++) {
+      const x = Math.random() * world.width
+      const y = Math.random() * world.height
+      this.shapeModel.addPoint(x, y)
+    }
+  }
+  
+  draw(graphics, view) {
+    // use superclass to get shapeDraw
+    super.draw(graphics, view)
+    graphics.setColor(colors.stars)
+    for (let i = 0; i < this.nstars; i++) {
+      graphics.drawPoint(this.shapeDraw.xPoints[i], this.shapeDraw.yPoints[i])
+    }
+  }
+
+}
 
 
 //-----------------------------------------------------------------------------
@@ -772,6 +795,7 @@ class Graphics {
     this.context.strokeStyle = color
   }
   setColor(color) {
+    this.context.fillStyle = color
     this.context.strokeStyle = color
   }
   clear() {
@@ -793,17 +817,10 @@ class Graphics {
     this.context.rect(x0, y0, x1-x0, y1-y0)
     this.context.stroke()
   }
+  drawPoint(x, y) {
+    this.context.fillRect(x, y, 1, 1)
+  }
 }
-
-// const Color = {
-//   white: '#fff',
-//   black: '#000',
-//   green: '#0f0',
-//   orange: '#f80',
-//   lightGray: '#eee',
-//   red: '#f00',
-//   yellow: 'yellow',
-// }
 
 
 const app = new App()
